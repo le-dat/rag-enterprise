@@ -227,7 +227,7 @@ def extract_graph_triplets(text_content: str) -> Dict[str, Any]:
     return json.loads(response.choices[0].message.content)
 
 
-def ingest_to_neo4j(chunks: List[Any], file_path: str):
+def ingest_to_neo4j(chunks: List[Any], file_path: str, group_access_list: List[str]):
     """Duyệt qua các chunk và nạp đồ thị vào Neo4j sử dụng các câu lệnh MERGE tránh trùng lặp"""
     neo4j = Neo4jClient()
     
@@ -241,18 +241,22 @@ def ingest_to_neo4j(chunks: List[Any], file_path: str):
             for node in triplets.get("nodes", []):
                 # Clean label & parameters to avoid injection or schema syntax error
                 label = "".join(char for char in node.get("label", "Entity") if char.isalnum())
-                # Cypher lưu vết các files chứa thực thể này dưới dạng danh sách
+                # Cypher lưu vết các files chứa thực thể này dưới dạng danh sách kèm thông tin phân quyền
                 cypher = f"""
                 MERGE (n:{label} {{id: $id}})
                 SET n.name = $name
                 WITH n
-                WHERE NOT $file_path IN coalesce(n.source_files, [])
-                SET n.source_files = coalesce(n.source_files, []) + $file_path
+                SET n.source_files = CASE WHEN $file_path IN coalesce(n.source_files, []) THEN n.source_files ELSE coalesce(n.source_files, []) + $file_path END
+                WITH n
+                UNWIND (coalesce(n.group_access, []) + $group_access) AS g
+                WITH n, collect(DISTINCT g) AS unique_groups
+                SET n.group_access = unique_groups
                 """
                 neo4j.query(cypher, {
                     "id": str(node["id"]), 
                     "name": str(node["name"]),
-                    "file_path": file_path
+                    "file_path": file_path,
+                    "group_access": group_access_list
                 })
                 
             # 2. Tạo hoặc cập nhật các Edge liên kết (Quan hệ)
@@ -263,14 +267,18 @@ def ingest_to_neo4j(chunks: List[Any], file_path: str):
                 MERGE (source)-[r:{edge_type}]->(target)
                 SET r.description = $desc
                 WITH r
-                WHERE NOT $file_path IN coalesce(r.source_files, [])
-                SET r.source_files = coalesce(r.source_files, []) + $file_path
+                SET r.source_files = CASE WHEN $file_path IN coalesce(r.source_files, []) THEN r.source_files ELSE coalesce(r.source_files, []) + $file_path END
+                WITH r
+                UNWIND (coalesce(r.group_access, []) + $group_access) AS g
+                WITH r, collect(DISTINCT g) AS unique_groups
+                SET r.group_access = unique_groups
                 """
                 neo4j.query(cypher, {
                     "source_id": str(edge["source"]),
                     "target_id": str(edge["target"]),
                     "desc": str(edge["desc"]),
-                    "file_path": file_path
+                    "file_path": file_path,
+                    "group_access": group_access_list
                 })
         print("✅ Đã hoàn thành nạp dữ liệu đồ thị vào Neo4j.")
     finally:
@@ -392,7 +400,7 @@ def scan_and_ingest_directory(directory_path: str, collection_name: str, group_a
             ingest_to_qdrant(collection_name, chunks, group_access_list, file_path)
             
             # 3. Ingest Neo4j
-            ingest_to_neo4j(chunks, file_path)
+            ingest_to_neo4j(chunks, file_path, group_access_list)
             
             # 4. Cập nhật registry
             registry[file_path] = {
