@@ -1,0 +1,162 @@
+[
+  {
+    "chunk_id": "hr_001",
+    "text": "Annual leave policy: All full-time employees are entitled to 15 days of paid annual leave per year. Leave must be approved by the direct manager at least 2 weeks in advance. Unused leave can be carried over up to 5 days into the next calendar year.",
+    "source": "hr_policy.pdf",
+    "department": "HR",
+    "role": "manager",
+    "page": 3
+  },
+  {
+    "chunk_id": "hr_002",
+    "text": "Sick leave entitlement: Employees may take up to 10 days of paid sick leave annually. A medical certificate is required for any sick leave exceeding 3 consecutive days. Sick leave does not carry over to the next year.",
+    "source": "hr_policy.pdf",
+    "department": "HR",
+    "role": "staff",
+    "page": 4
+  },
+  {
+    "chunk_id": "hr_003",
+    "text": "Performance review process: Annual performance reviews are conducted in Q4. The process includes self-assessment, peer review, and manager evaluation. Employees are rated on a 5-point scale across competency areas including communication, delivery, and collaboration.",
+    "source": "hr_policy.pdf",
+    "department": "HR",
+    "role": "manager",
+    "page": 7
+  },
+  {
+    "chunk_id": "hr_004",
+    "text": "Salary review cycle: Compensation adjustments are made annually following the performance review. Merit increases are budgeted at 3-5% of base salary for meeting expectations, and up to 10% for exceeding expectations. All adjustments require VP-level approval.",
+    "source": "compensation_guide.pdf",
+    "department": "HR",
+    "role": "manager",
+    "page": 2
+  },
+  {
+    "chunk_id": "hr_005",
+    "text": "Remote work policy: Employees may work remotely up to 3 days per week with manager approval. A minimum of 2 days per week in-office is required for all staff. Fully remote roles require Director-level approval and are reviewed quarterly.",
+    "source": "hr_policy.pdf",
+    "department": "HR",
+    "role": "staff",
+    "page": 11
+  },
+  {
+    "chunk_id": "hr_006",
+    "text": "Disciplinary procedures: The company follows a progressive discipline framework: verbal warning → written warning → performance improvement plan (PIP) → termination. Each stage requires HR documentation and approval. Severe misconduct may bypass earlier stages.",
+    "source": "hr_policy.pdf",
+    "department": "HR",
+    "role": "manager",
+    "page": 15
+  },
+  {
+    "chunk_id": "hr_007",
+    "text": "Onboarding process: New hires complete a 30-day onboarding program. Week 1 covers company culture and compliance training. Weeks 2-4 are department-specific with a buddy assigned from the team. A 30-60-90 day check-in is mandatory with the direct manager.",
+    "source": "onboarding_guide.pdf",
+    "department": "HR",
+    "role": "staff",
+    "page": 1
+  },
+  {
+    "chunk_id": "hr_008",
+    "text": "Benefits summary: The company offers comprehensive health insurance (medical, dental, vision), life insurance at 2x annual salary, and a 401k plan with 4% employer match. Benefits enrollment opens during the first 30 days of employment and annually in November.",
+    "source": "benefits_handbook.pdf",
+    "department": "HR",
+    "role": "staff",
+    "page": 2
+  },
+  {
+    "chunk_id": "hr_009",
+    "text": "Termination and severance policy: Employees terminated without cause receive severance equal to 2 weeks per year of service, capped at 26 weeks. COBRA continuation coverage is available for 18 months post-termination. Exit interviews are conducted by HR within 5 business days.",
+    "source": "hr_policy.pdf",
+    "department": "HR",
+    "role": "manager",
+    "page": 20
+  },
+  {
+    "chunk_id": "hr_010",
+    "text": "Training and development budget: Each employee receives an annual learning budget of $1,500 for external training, conferences, or certifications. Requests must be submitted via the HR portal and approved by the department head. Unused budget does not carry over.",
+    "source": "hr_policy.pdf",
+    "department": "HR",
+    "role": "staff",
+    "page": 9
+  },
+  {
+    "chunk_id": "sales_001",
+    "text": "Q2 2024 sales targets: The North America region has a quarterly target of $4.2M ARR. Enterprise deals (>$100k) account for 60% of quota. Each Account Executive carries a $800k individual quota. Attainment above 110% triggers accelerator commissions at 1.5x rate.",
+    "source": "sales_playbook_q2.pdf",
+    "department": "Sales",
+    "role": "manager",
+    "page": 1
+  },
+  {
+    "chunk_id": "sales_002",
+    "text": "Commission structure: Base commission rate is 8% of closed ARR up to 100% quota attainment. From 100% to 150% attainment, rate increases to 12%. Above 150%, rate is 16%. Commissions are paid monthly, 30 days after contract signature and initial payment received.",
+    "source": "commission_plan_2024.pdf",
+    "department": "Sales",
+    "role": "staff",
+    "page": 3
+  },
+  {
+    "chunk_id": "sales_003",
+    "text": "Enterprise deal approval process: Deals over $250k require VP of Sales signature. Deals over $500k require CEO sign-off. Legal review is mandatory for any multi-year contracts. Standard review SLA is 5 business days; expedited review available for end-of-quarter deals.",
+    "source": "sales_playbook_q2.pdf",
+    "department": "Sales",
+    "role": "manager",
+    "page": 8
+  },
+  {
+    "chunk_id": "sales_004",
+    "text": "CRM hygiene requirements: All opportunities must be updated in Salesforce within 24 hours of any customer interaction. Stage progression requires documented next steps and close date. Opportunities stale for more than 14 days are flagged for manager review.",
+    "source": "sales_ops_guide.pdf",
+    "department": "Sales",
+    "role": "staff",
+    "page": 2
+  },
+  {
+    "chunk_id": "sales_005",
+    "text": "Discount authority matrix: Account Executives can offer up to 10% discount without approval. Sales Managers can authorize up to 20%. Anything above 20% requires VP of Sales approval with documented business justification. Discounts must not reduce gross margin below 65%.",
+    "source": "sales_playbook_q2.pdf",
+    "department": "Sales",
+    "role": "manager",
+    "page": 5
+  },
+  {
+    "chunk_id": "sales_006",
+    "text": "Pipeline review cadence: Weekly 1:1 pipeline reviews are held every Monday. Full team pipeline reviews occur on the first Friday of each month. Forecast calls with leadership happen bi-weekly. All forecasts must be submitted by Thursday EOD for the weekly leadership update.",
+    "source": "sales_ops_guide.pdf",
+    "department": "Sales",
+    "role": "staff",
+    "page": 4
+  },
+  {
+    "chunk_id": "sales_007",
+    "text": "Lead qualification criteria (MEDDIC): Qualified leads must have Metrics (quantified business impact), Economic Buyer (identified), Decision Criteria (documented), Decision Process (mapped), Identified Pain (validated), and Champion (internal advocate). Leads missing 3+ criteria are returned to SDR.",
+    "source": "sales_playbook_q2.pdf",
+    "department": "Sales",
+    "role": "staff",
+    "page": 12
+  },
+  {
+    "chunk_id": "sales_008",
+    "text": "Competitive win/loss analysis Q1 2024: Win rate against Competitor A improved to 68% (up from 54% in Q4 2023) following new security compliance messaging. Primary loss reasons: price sensitivity (34%), feature gap in analytics module (28%), incumbent vendor inertia (38%).",
+    "source": "competitive_analysis_q1.pdf",
+    "department": "Sales",
+    "role": "manager",
+    "page": 6
+  },
+  {
+    "chunk_id": "sales_009",
+    "text": "Territory assignment rules: Territories are assigned based on account size and geography. Named accounts (>1000 employees) are assigned individually. SMB accounts (<100 employees) are pooled by region. Territory disputes are resolved by the VP of Sales within 10 business days.",
+    "source": "sales_ops_guide.pdf",
+    "department": "Sales",
+    "role": "manager",
+    "page": 7
+  },
+  {
+    "chunk_id": "sales_010",
+    "text": "Customer success handoff process: Upon deal close, the AE completes a handoff form in Salesforce with product scope, key stakeholders, success criteria, and any commitments made during sales. The CSM introduction call must occur within 5 business days of contract signature.",
+    "source": "sales_playbook_q2.pdf",
+    "department": "Sales",
+    "role": "staff",
+    "page": 15
+  }
+]
