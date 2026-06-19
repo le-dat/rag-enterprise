@@ -11,29 +11,26 @@ Usage:
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 
-from dotenv import load_dotenv
 from fastembed import SparseTextEmbedding, TextEmbedding
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as rest
+from src.config import settings
 
-load_dotenv()
-
-COLLECTION_NAME = os.getenv("QDRANT_COLLECTION", "rag_enterprise")
+COLLECTION_NAME = settings.QDRANT_COLLECTION
 DENSE_DIM = 384  # BAAI/bge-small-en-v1.5
 DENSE_MODEL = "BAAI/bge-small-en-v1.5"
 SPARSE_MODEL = "prithivida/Splade_PP_en_v1"
 
 
 def _get_client() -> QdrantClient:
-    url = os.getenv("QDRANT_URL")
-    api_key = os.getenv("QDRANT_API_KEY")
+    url = settings.QDRANT_URL
+    api_key = settings.QDRANT_API_KEY
 
     if not url:
-        print("❌  QDRANT_URL not set in .env — aborting.")
+        print("❌  QDRANT_URL not configured in settings — aborting.")
         sys.exit(1)
 
     return QdrantClient(url=url, api_key=api_key)

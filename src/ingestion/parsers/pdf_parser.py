@@ -1,15 +1,15 @@
-import os
 import logging
 from pathlib import Path
 from typing import List
 from llama_index.core import Document
+from src.config import settings
 
 logger = logging.getLogger(__name__)
 
 class PDFParser:
     def __init__(self):
-        self.api_key = os.getenv("LLAMAPARSE_API_KEY")
-        self.use_llamaparse = os.getenv("USE_LLAMAPARSE", "true").lower() == "true"
+        self.api_key = settings.LLAMAPARSE_API_KEY
+        self.use_llamaparse = settings.USE_LLAMAPARSE
 
     def parse(self, file_path: Path) -> List[Document]:
         """

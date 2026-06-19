@@ -1,19 +1,19 @@
-import os
 import logging
 from typing import List, Dict, Any
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as rest
+from src.config import settings
 
 logger = logging.getLogger(__name__)
 
 class QdrantIndexer:
     def __init__(self):
-        self.url = os.getenv("QDRANT_URL")
-        self.api_key = os.getenv("QDRANT_API_KEY")
-        self.collection_name = os.getenv("QDRANT_COLLECTION", "rag_enterprise")
+        self.url = settings.QDRANT_URL
+        self.api_key = settings.QDRANT_API_KEY
+        self.collection_name = settings.QDRANT_COLLECTION
         
         if not self.url:
-            raise ValueError("QDRANT_URL is not set in environment variables.")
+            raise ValueError("QDRANT_URL is not configured in settings.")
             
         self.client = QdrantClient(url=self.url, api_key=self.api_key)
 

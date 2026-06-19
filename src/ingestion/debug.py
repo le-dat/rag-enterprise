@@ -1,17 +1,14 @@
 import argparse
-import os
 import sys
-from dotenv import load_dotenv
 from qdrant_client import QdrantClient
-
-load_dotenv()
+from src.config import settings
 
 def print_collection_points(collection_name: str, limit: int) -> None:
-    url = os.getenv("QDRANT_URL")
-    api_key = os.getenv("QDRANT_API_KEY")
+    url = settings.QDRANT_URL
+    api_key = settings.QDRANT_API_KEY
     
     if not url:
-        print("❌ QDRANT_URL is not set.")
+        print("❌ QDRANT_URL is not configured in settings.")
         sys.exit(1)
         
     client = QdrantClient(url=url, api_key=api_key)
@@ -47,7 +44,7 @@ def print_collection_points(collection_name: str, limit: int) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Debug collection payloads")
-    parser.add_argument("--collection", default="rag_enterprise", help="Qdrant collection name")
+    parser.add_argument("--collection", default=settings.QDRANT_COLLECTION, help="Qdrant collection name")
     parser.add_argument("--limit", type=int, default=3, help="Number of points to print")
     
     args = parser.parse_args()

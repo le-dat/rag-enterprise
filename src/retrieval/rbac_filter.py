@@ -1,0 +1,45 @@
+import logging
+from qdrant_client.http import models as rest
+from src.auth.jwt_handler import UserContext
+
+logger = logging.getLogger(__name__)
+
+def build_qdrant_rbac_filter(user: UserContext) -> rest.Filter:
+    """
+    Builds a Qdrant query filter based on the user context (department and role).
+    
+    Rules:
+    - User can only view documents belonging to their department.
+    - If user is a 'staff', they can only view 'staff' level documents.
+    - If user is a 'manager', they can view both 'staff' and 'manager' level documents.
+    """
+    conditions = []
+    
+    # 1. Department Filter
+    conditions.append(
+        rest.FieldCondition(
+            key="department",
+            match=rest.MatchValue(value=user.department)
+        )
+    )
+    
+    # 2. Role Filter (hierarchical)
+    if user.role == "manager":
+        # Managers can access staff or manager documents
+        conditions.append(
+            rest.FieldCondition(
+                key="role",
+                match=rest.MatchAny(any=["staff", "manager"])
+            )
+        )
+    else:
+        # Staff can ONLY access staff documents
+        conditions.append(
+            rest.FieldCondition(
+                key="role",
+                match=rest.MatchValue(value="staff")
+            )
+        )
+        
+    logger.info(f"RBAC Filter built for department={user.department}, role={user.role}")
+    return rest.Filter(must=conditions)
