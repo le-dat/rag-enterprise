@@ -119,7 +119,7 @@ def load_fixtures(client: QdrantClient, fixtures_path: Path) -> None:
 def verify(client: QdrantClient) -> bool:
     """Run the Day 0 VERIFY checklist."""
     count = client.count(collection_name=COLLECTION_NAME).count
-    print(f"\n─── VERIFY ─────────────────────────────────")
+    print("\n─── VERIFY ─────────────────────────────────")
     print(f"  Total chunks : {count}")
 
     hr_count = client.count(
@@ -143,7 +143,7 @@ def verify(client: QdrantClient) -> bool:
     print(f"  HR chunks    : {hr_count}  {'✅' if ok_hr else '❌'}")
     print(f"  Sales chunks : {sales_count}  {'✅' if ok_sales else '❌'}")
     print(f"  Total == 20  : {'✅' if ok_count else f'❌  got {count}'}")
-    print(f"─────────────────────────────────────────────\n")
+    print("─────────────────────────────────────────────\n")
 
     return ok_count and ok_hr and ok_sales
 

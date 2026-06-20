@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+from typing import Optional
 from jose import jwt, JWTError
 from pydantic import BaseModel, Field
 from src.config import settings
@@ -6,9 +8,6 @@ class UserContext(BaseModel):
     user_id: str = Field(..., description="Unique identifier of the employee")
     role: str = Field(..., description="RBAC role level (e.g. manager, staff)")
     department: str = Field(..., description="RBAC department affiliation (e.g. HR, Sales)")
-
-from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 def generate_token(user_id: str, role: str, department: str) -> str:
     """

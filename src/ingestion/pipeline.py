@@ -3,6 +3,10 @@ import logging
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
+from src.ingestion.router import IngestionRouter
+from src.ingestion.chunker import DocumentChunker
+from src.ingestion.embedder import DocumentEmbedder
+from src.ingestion.indexer import QdrantIndexer
 
 # Config logging
 logging.basicConfig(
@@ -13,11 +17,6 @@ logger = logging.getLogger("ingestion_pipeline")
 
 # Load environment
 load_dotenv()
-
-from src.ingestion.router import IngestionRouter
-from src.ingestion.chunker import DocumentChunker
-from src.ingestion.embedder import DocumentEmbedder
-from src.ingestion.indexer import QdrantIndexer
 
 def run_pipeline(file_path: str, department: str, role: str) -> None:
     path = Path(file_path)

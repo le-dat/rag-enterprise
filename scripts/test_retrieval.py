@@ -26,9 +26,9 @@ def run_tests():
     query_1 = "annual leave policy"
     query_2 = "sales target and discount"
 
-    print(f"\n=======================================================")
+    print("\n=======================================================")
     print(f"TEST 1: Query = '{query_1}'")
-    print(f"=======================================================")
+    print("=======================================================")
     for user in contexts:
         print(f"\n👤 User: {user.user_id} | Dept: {user.department} | Role: {user.role}")
         results = engine.search(query_text=query_1, user=user, limit=3)
@@ -41,9 +41,9 @@ def run_tests():
             print(f"  [{idx+1}] Source: {r['source']} | Dept: {r['department']} | Role: {r['role']} | Score: {r['score']:.4f}")
             print(f"      Text: {r['text'][:120]}...")
 
-    print(f"\n=======================================================")
+    print("\n=======================================================")
     print(f"TEST 2: Query = '{query_2}'")
-    print(f"=======================================================")
+    print("=======================================================")
     for user in contexts:
         print(f"\n👤 User: {user.user_id} | Dept: {user.department} | Role: {user.role}")
         results = engine.search(query_text=query_2, user=user, limit=3)
@@ -56,7 +56,7 @@ def run_tests():
             print(f"  [{idx+1}] Source: {r['source']} | Dept: {r['department']} | Role: {r['role']} | Score: {r['score']:.4f}")
             print(f"      Text: {r['text'][:120]}...")
 
-    print(f"\n=======================================================")
+    print("\n=======================================================")
     print("Integration verification finished.")
 
 if __name__ == "__main__":

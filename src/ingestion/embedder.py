@@ -1,5 +1,5 @@
 import logging
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 from llama_index.core.schema import TextNode
 from fastembed import TextEmbedding, SparseTextEmbedding
 

@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     # ── LLM APIs ──────────────────────────────────────────────
     OPENAI_API_KEY: str = ""
     COHERE_API_KEY: str = ""
+    COHERE_MODEL: str = "rerank-v3.5"
+    LLM_MODEL: str = "gpt-4o-mini"
 
     # ── Parsing ───────────────────────────────────────────────
     LLAMAPARSE_API_KEY: str = ""

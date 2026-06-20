@@ -1,5 +1,4 @@
 import argparse
-import sys
 import uuid
 
 from src.auth.jwt_handler import generate_token
@@ -20,11 +19,11 @@ def main() -> None:
         department=args.department
     )
     
-    print(f"\n🔑 Mock token generated successfully for:")
+    print("\n🔑 Mock token generated successfully for:")
     print(f"  User ID    : {user_id}")
     print(f"  Department : {args.department}")
     print(f"  Role       : {args.role}")
-    print(f"\nToken string (include in Authorization: Bearer <token>):")
+    print("\nToken string (include in Authorization: Bearer <token>):")
     print(f"{token}\n")
 
 if __name__ == "__main__":

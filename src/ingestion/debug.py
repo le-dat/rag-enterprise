@@ -30,7 +30,7 @@ def print_collection_points(collection_name: str, limit: int) -> None:
         for idx, point in enumerate(results):
             print(f"\nPoint #{idx + 1}")
             print(f"  ID: {point.id}")
-            print(f"  Payload:")
+            print("  Payload:")
             for key, val in point.payload.items():
                 # Clip text value if it is too long for easy reading
                 if key == "text" and len(str(val)) > 150:
