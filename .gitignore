@@ -22,5 +22,4 @@ venv/
 .claude/
 .agents/
 docs/
-data/
-!data/.ingestion_registry.json
+# data/
