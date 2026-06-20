@@ -8,6 +8,8 @@ from src.ingestion.chunker import DocumentChunker
 from src.ingestion.embedder import DocumentEmbedder
 from src.ingestion.indexer import QdrantIndexer
 
+from src.guardrails.retrieval_rail import RetrievalRail
+
 # Config logging
 logging.basicConfig(
     level=logging.INFO,
@@ -15,7 +17,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger("ingestion_pipeline")
 
-# Load environment
 load_dotenv()
 
 def run_pipeline(file_path: str, department: str, role: str) -> None:
@@ -43,6 +44,28 @@ def run_pipeline(file_path: str, department: str, role: str) -> None:
     )
     if not chunks:
         logger.warning("No chunks were generated. Exiting.")
+        return
+
+    # Step 2.5: Ingestion-Time Safety Scan (RetrievalRail)
+    logger.info("Applying Ingestion-Time Safety Scan on chunks...")
+    rail = RetrievalRail()
+    rail_chunks = [{"chunk_id": node.id_, "text": node.text} for node in chunks]
+    safe_rail_chunks = rail.validate_chunks(rail_chunks)
+    safe_chunk_ids = {c["chunk_id"] for c in safe_rail_chunks}
+    
+    filtered_chunks = [node for node in chunks if node.id_ in safe_chunk_ids]
+    blocked_chunks = [node for node in chunks if node.id_ not in safe_chunk_ids]
+    blocked_count = len(blocked_chunks)
+    if blocked_count > 0:
+        logger.error(
+            f"🚨 SECURITY ALERT: Blocked {blocked_count} poisoned chunk(s) during ingestion of file '{path.name}'.\n"
+            f"Blocked Chunk IDs: {[node.id_ for node in blocked_chunks]}\n"
+            f"Sample blocked content: {[node.text[:100] + '...' for node in blocked_chunks]}"
+        )
+    
+    chunks = filtered_chunks
+    if not chunks:
+        logger.warning(f"No safe chunks left after security scanning for file '{path.name}'. Ingestion aborted.")
         return
 
     # Step 3: Embed

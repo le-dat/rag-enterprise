@@ -6,6 +6,7 @@ from src.retrieval.hybrid_search import HybridSearchEngine
 from src.retrieval.reranker import CohereReranker
 from src.generation.generator import OpenAIGenerator
 from src.generation.grounding import GroundingChecker
+from src.guardrails.retrieval_rail import RetrievalRail
 
 # Setup logging to console
 logging.basicConfig(
@@ -15,7 +16,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("pipeline_cli")
 
-def run_pipeline(query: str, token: str):
+def run_pipeline(query: str, token: str, no_rail: bool = False):
     print("\n" + "="*80)
     print(" STARTING ENTERPRISE RAG E2E PIPELINE ")
     print("="*80)
@@ -47,6 +48,15 @@ def run_pipeline(query: str, token: str):
     for i, doc in enumerate(reranked_results):
         print(f"   [{i+1}] chunk_id: {doc['chunk_id']} | Source: {doc['source']} (Page: {doc['page']}) | Rerank Score: {doc['score']:.4f}")
 
+    # 3.5. Retrieval Rail (Prompt Injection Safety Filter)
+    if no_rail:
+        print("\n⚠️ Skipping Retrieval Rail (no-rail enabled).")
+    else:
+        print("\n[Step 3.5] Applying Retrieval Rail (Llama Guard via Groq)...")
+        rail = RetrievalRail()
+        reranked_results = rail.validate_chunks(reranked_results)
+        print(f"✅ Safe chunks remaining: {len(reranked_results)} / 5")
+
     # 4. OpenAI Generation
     print("\n[Step 4] Generating cited response from OpenAI...")
     generator = OpenAIGenerator()
@@ -67,6 +77,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run End-to-End Enterprise RAG Ingestion & Query Pipeline")
     parser.add_argument("--query", type=str, required=True, help="Query string to search and answer")
     parser.add_argument("--token", type=str, required=True, help="JWT auth token containing RBAC claims")
+    parser.add_argument("--no-rail", action="store_true", help="Disable Retrieval Rail safety guardrail for demo purposes")
     args = parser.parse_args()
 
-    run_pipeline(query=args.query, token=args.token)
+    run_pipeline(query=args.query, token=args.token, no_rail=args.no_rail)

@@ -26,6 +26,7 @@ class Settings(BaseSettings):
 
     # ── Retrieval Rail ────────────────────────────────────────
     GROQ_API_KEY: str = ""
+    GROQ_MODEL: str = "meta-llama/llama-prompt-guard-2-86m"
 
     # ── Auth (JWT) ────────────────────────────────────────────
     JWT_SECRET: str = "super-secret-dev-key-change-prod"

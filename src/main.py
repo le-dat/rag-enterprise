@@ -1,11 +1,12 @@
 import logging
 from fastapi import FastAPI, Depends, Query
-from pydantic import BaseModel, Field
+from pydantic import Field
 from src.auth.middleware import get_current_user, UserContext
 from src.retrieval.hybrid_search import HybridSearchEngine
 from src.retrieval.reranker import CohereReranker
 from src.generation.generator import OpenAIGenerator
 from src.generation.grounding import GroundingChecker
+from src.guardrails.retrieval_rail import RetrievalRail
 
 # Setup logging
 logging.basicConfig(
@@ -49,6 +50,14 @@ def get_grounding_checker() -> GroundingChecker:
         grounding_checker = GroundingChecker()
     return grounding_checker
 
+retrieval_rail = None
+
+def get_retrieval_rail() -> RetrievalRail:
+    global retrieval_rail
+    if retrieval_rail is None:
+        retrieval_rail = RetrievalRail()
+    return retrieval_rail
+
 @app.get("/search")
 def search(
     q: str = Query(..., description="Query string to search"),  
@@ -83,14 +92,16 @@ def query_pipeline(
     engine: HybridSearchEngine = Depends(get_search_engine),
     cohere_rerank: CohereReranker = Depends(get_reranker),
     llm_gen: OpenAIGenerator = Depends(get_generator),
-    grounding: GroundingChecker = Depends(get_grounding_checker)
+    grounding: GroundingChecker = Depends(get_grounding_checker),
+    rail: RetrievalRail = Depends(get_retrieval_rail)
 ):
     """
     Secure endpoint running the full RAG pipeline:
     1. Retrieval (Hybrid Search with RBAC filter) -> Returns top 20
     2. Reranking (Cohere Reranker) -> Selects top 5
-    3. Generation (OpenAI GPT-4o-mini with citations)
-    4. Grounding Check (Verify answer against retrieved sources)
+    3. Retrieval Rail (Llama Guard via Groq) -> Blocks unsafe chunks
+    4. Generation (OpenAI GPT-4o-mini with citations)
+    5. Grounding Check (Verify answer against retrieved sources)
     """
     logger.info(f"RAG query request by user {current_user.user_id} on route /query")
     
@@ -108,15 +119,18 @@ def query_pipeline(
         top_n=5
     )
     
-    # 3. Generate Answer
+    # 3. Retrieval Rail (Prompt Injection Safety Filter)
+    safe_results = rail.validate_chunks(reranked_results)
+    
+    # 4. Generate Answer
     answer = llm_gen.generate(
         query=q,
-        documents=reranked_results
+        documents=safe_results
     )
     
-    # 4. Grounding Check
+    # 5. Grounding Check
     grounding_res = grounding.check_grounding(
-        documents=reranked_results,
+        documents=safe_results,
         answer=answer
     )
     
@@ -124,7 +138,7 @@ def query_pipeline(
         "query": q,
         "answer": answer,
         "grounding": grounding_res,
-        "results": reranked_results,
+        "results": safe_results,
         "user": {
             "id": current_user.user_id,
             "department": current_user.department,
