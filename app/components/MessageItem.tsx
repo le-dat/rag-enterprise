@@ -60,7 +60,7 @@ export default function MessageItem({ msg }: MessageItemProps) {
 
         {/* General error message */}
         {msg.error && !msg.blocked && (
-          <div className="mt-3 bg-zinc-950 border border-red-950 text-red-400 p-3 rounded-[2px] font-mono text-xs">
+          <div className="mt-3 bg-zinc-950 border border-red-950 text-red-400 p-3 rounded-[2px] font-mono text-xs break-all">
             <span className="font-bold">SYSTEM ERROR:</span> {msg.error}
           </div>
         )}

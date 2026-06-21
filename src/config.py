@@ -13,7 +13,15 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
     COHERE_API_KEY: str = ""
     COHERE_MODEL: str = "rerank-v3.5"
-    LLM_MODEL: str = "gpt-4o-mini"
+    OPENAI_MODEL: str = "gpt-4o-mini"
+
+    # ── MiniMax Config ────────────────────────────────────────
+    MINIMAX_API_KEY: str = ""
+    MINIMAX_API_BASE: str = "https://api.minimax.io/v1"
+    MINIMAX_MODEL: str = "MiniMax-M3"
+
+    # ── Fallback Configuration ────────────────────────────────
+    LLM_FALLBACK_ORDER: str = "openai,minimax"
 
     # ── Parsing ───────────────────────────────────────────────
     LLAMAPARSE_API_KEY: str = ""
@@ -32,9 +40,6 @@ class Settings(BaseSettings):
     JWT_SECRET: str = "super-secret-dev-key-change-prod"
     JWT_ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day
-
-    # ── Demo / Simulation Mode ────────────────────────────────
-    DEMO_MODE: bool = False
 
 # Singleton settings instance
 settings = Settings()

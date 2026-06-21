@@ -62,8 +62,8 @@ def test_reranker_missing_key_fallback():
 # ───────────────────────────────────────────────────────────
 
 def test_generator_success(mocker):
-    mock_openai_client = mocker.patch("src.generation.generator.OpenAI")
-    mock_instance = mock_openai_client.return_value
+    mock_get_client = mocker.patch("src.generation.generator.get_openai_client")
+    mock_instance = mock_get_client.return_value
     
     # Mock LLM completion response
     mock_choice = MagicMock()
@@ -93,8 +93,8 @@ def test_generator_empty_context():
 # ───────────────────────────────────────────────────────────
 
 def test_grounding_checker_success(mocker):
-    mock_openai_client = mocker.patch("src.generation.grounding.OpenAI")
-    mock_instance = mock_openai_client.return_value
+    mock_get_client = mocker.patch("src.generation.grounding.get_openai_client")
+    mock_instance = mock_get_client.return_value
     
     # Mock json response from auditor
     mock_choice = MagicMock()

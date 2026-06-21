@@ -2,7 +2,7 @@ import logging
 from langgraph.graph import StateGraph, MessagesState, START
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import MemorySaver
-from langchain_openai import ChatOpenAI
+from src.core.llm_factory import get_chat_model
 from langchain_core.runnables import RunnableConfig
 
 from src.config import settings
@@ -22,14 +22,8 @@ async def call_model(state: MessagesState, config: RunnableConfig):
     """
     logger.info("Agent call_model node invoked")
     
-    # Initialize the LLM using our config settings
-    # Bind the tools so the LLM can decide when to call them
-    llm = ChatOpenAI(
-        model=settings.LLM_MODEL,
-        api_key=settings.OPENAI_API_KEY,
-        temperature=0.0,
-        streaming=True
-    ).bind_tools(TOOLS)
+    # Retrieve pre-configured LLM from factory and bind tools
+    llm = get_chat_model().bind_tools(TOOLS)
     
     # Run the model
     response = await llm.ainvoke(state["messages"], config=config)

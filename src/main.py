@@ -11,7 +11,6 @@ from src.generation.grounding import GroundingChecker
 from src.guardrails.retrieval_rail import RetrievalRail
 from src.guardrails.input_rail import InputRail
 from src.api.routes import search, query, agent, auth
-from src.config import settings
 
 
 configure_logging()
@@ -25,29 +24,12 @@ async def lifespan(app: FastAPI):
     """Initialise heavy services once at startup; clean up on shutdown."""
     logger.info("🚀 Starting up Enterprise RAG services...")
 
-    if settings.DEMO_MODE:
-        logger.info("⚡ DEMO MODE is active. Instantiating mock RAG services...")
-        from src.core.demo import (
-            MockSearchEngine,
-            MockReranker,
-            MockGenerator,
-            MockGroundingChecker,
-            MockRetrievalRail,
-            MockInputRail,
-        )
-        app.state.search_engine     = MockSearchEngine()
-        app.state.reranker          = MockReranker()
-        app.state.generator         = MockGenerator()
-        app.state.grounding_checker = MockGroundingChecker()
-        app.state.retrieval_rail    = MockRetrievalRail()
-        app.state.input_rail        = MockInputRail()
-    else:
-        app.state.search_engine     = HybridSearchEngine()
-        app.state.reranker          = CohereReranker()
-        app.state.generator         = OpenAIGenerator()
-        app.state.grounding_checker = GroundingChecker()
-        app.state.retrieval_rail    = RetrievalRail()
-        app.state.input_rail        = InputRail()
+    app.state.search_engine     = HybridSearchEngine()
+    app.state.reranker          = CohereReranker()
+    app.state.generator         = OpenAIGenerator()
+    app.state.grounding_checker = GroundingChecker()
+    app.state.retrieval_rail    = RetrievalRail()
+    app.state.input_rail        = InputRail()
     
     from src.agent.graph import agent_graph
     app.state.agent_graph      = agent_graph

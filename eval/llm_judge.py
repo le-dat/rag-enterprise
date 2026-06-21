@@ -1,21 +1,14 @@
 import json
 import logging
 from typing import List, Dict, Any
-from openai import OpenAI
+from src.core.llm_factory import get_openai_client
 from src.config import settings
 
 logger = logging.getLogger("llm_judge")
 
 class LLMJudge:
-    def __init__(self):
-        self.api_key = settings.OPENAI_API_KEY
-        self.model = settings.LLM_MODEL
-        
-        if not self.api_key:
-            logger.warning("OPENAI_API_KEY is not configured in settings. LLMJudge will not be functional.")
-            self.client = None
-        else:
-            self.client = OpenAI(api_key=self.api_key)
+        self.client = get_openai_client()
+        self.model = self.client.model if self.client else settings.OPENAI_MODEL
 
     def evaluate_context_precision(self, question: str, retrieved_chunks: List[Dict[str, Any]]) -> float:
         """

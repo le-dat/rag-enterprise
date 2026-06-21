@@ -233,7 +233,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-zinc-950 text-zinc-100 flex flex-col relative font-sans">
+    <main className="h-screen overflow-hidden w-full bg-zinc-950 text-zinc-100 flex flex-col relative font-sans">
       {/* Background grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#18181b_1px,transparent_1px),linear-gradient(to_bottom,#18181b_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
 
@@ -242,7 +242,7 @@ export default function Home() {
 
       {/* Chat Area */}
       <section className="flex-1 w-full max-w-xs mx-auto md:max-w-4xl flex flex-col p-3 md:p-6 relative z-10 overflow-hidden">
-        <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin scrollbar-thumb-zinc-800">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 space-y-6 scrollbar-thin scrollbar-thumb-zinc-800">
           {messages.length === 0 ? (
             <WelcomeBanner onSelectSuggestion={handleSuggest} />
           ) : (

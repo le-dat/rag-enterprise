@@ -133,9 +133,9 @@ def test_policy_lookup_tool_success():
 
 @pytest.mark.anyio
 async def test_agent_graph_invoke(mocker):
-    # Mock ChatOpenAI so we don't trigger actual LLM model calls during unit test
-    mock_chat = mocker.patch("src.agent.graph.ChatOpenAI")
-    mock_instance = mock_chat.return_value
+    # Mock get_chat_model so we don't trigger actual LLM model calls during unit test
+    mock_get_llm = mocker.patch("src.agent.graph.get_chat_model")
+    mock_instance = mock_get_llm.return_value
     
     # Mock response of the bound model's async ainvoke method
     mock_instance.bind_tools.return_value.ainvoke = mocker.AsyncMock(
