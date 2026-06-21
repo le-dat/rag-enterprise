@@ -1,27 +1,27 @@
 {
-  "eval_date": "2026-06-21T08:46:16.749615+00:00",
+  "eval_date": "2026-06-21T11:47:05.399651+00:00",
   "testset": "eval/testset.json",
   "total_questions": 20,
   "baseline": {
     "mode": "dense_only_no_rerank",
-    "avg_context_precision": 0.2713,
-    "avg_context_recall": 0.93,
+    "avg_context_precision": 0.258,
+    "avg_context_recall": 0.955,
     "avg_answer_relevancy": 1.0
   },
   "full_pipeline": {
     "mode": "hybrid_search_plus_cohere_rerank",
-    "avg_context_precision": 0.28,
+    "avg_context_precision": 0.29,
     "avg_context_recall": 0.95,
     "avg_answer_relevancy": 1.0
   },
   "delta": {
     "avg_context_precision": {
-      "absolute": 0.0087,
-      "percent": 3.2
+      "absolute": 0.032,
+      "percent": 12.4
     },
     "avg_context_recall": {
-      "absolute": 0.02,
-      "percent": 2.2
+      "absolute": -0.005,
+      "percent": -0.5
     },
     "avg_answer_relevancy": {
       "absolute": 0.0,
@@ -35,7 +35,7 @@
         "department": "HR",
         "mode": "baseline",
         "context_precision": 0.3333,
-        "context_recall": 0.0,
+        "context_recall": 0.5,
         "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_001",
@@ -76,7 +76,7 @@
           "hr_009",
           "hr_005"
         ],
-        "answer_preview": "Employees can carry over up to 5 unused leave days into the next calendar year [hr_001]."
+        "answer_preview": "Employees can carry over up to 5 days of unused annual leave into the next calendar year [hr_001]."
       },
       {
         "question": "How many days of paid sick leave can employees take annually?",
@@ -114,7 +114,7 @@
         "question": "When are annual performance reviews conducted?",
         "department": "HR",
         "mode": "baseline",
-        "context_precision": 0.6,
+        "context_precision": 0.3333,
         "context_recall": 0.8,
         "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
@@ -124,7 +124,7 @@
           "hr_006",
           "hr_001"
         ],
-        "answer_preview": "Annual performance reviews are conducted in Q4, which includes a self-assessment, peer review, and manager evaluation [hr_003]."
+        "answer_preview": "Annual performance reviews are conducted in Q4, which includes a self-assessment, peer review, and manager evaluation, with employees rated on a 5-point scale across various competency areas [hr_003]."
       },
       {
         "question": "What is the merit increase percentage for employees who meet expectations?",
@@ -188,7 +188,7 @@
           "hr_policy_txt_000_7733d7e3",
           "hr_003"
         ],
-        "answer_preview": "Each employee receives an annual learning budget of $1,500 for external training, conferences, or certifications. Requests must be submitted via the HR portal and approved by the department head. Unus"
+        "answer_preview": "Each employee receives an annual learning budget of $1,500 for external training, conferences, or certifications [hr_010]."
       },
       {
         "question": "What is the quarterly sales target for the North America region in Q2 2024?",
@@ -436,7 +436,7 @@
         "question": "When are annual performance reviews conducted?",
         "department": "HR",
         "mode": "full",
-        "context_precision": 0.4,
+        "context_precision": 0.6,
         "context_recall": 1.0,
         "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
@@ -446,7 +446,7 @@
           "hr_006",
           "hr_005"
         ],
-        "answer_preview": "Annual performance reviews are conducted in Q4, specifically including a self-assessment, peer review, and manager evaluation, with employees rated on a 5-point scale across various competency areas ["
+        "answer_preview": "Annual performance reviews are conducted in Q4, specifically including self-assessment, peer review, and manager evaluation, with employees rated on a 5-point scale across various competency areas [hr"
       },
       {
         "question": "What is the merit increase percentage for employees who meet expectations?",

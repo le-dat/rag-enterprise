@@ -23,7 +23,8 @@ from src.generation.generator import OpenAIGenerator
 from src.generation.grounding import GroundingChecker
 from src.guardrails.retrieval_rail import RetrievalRail
 from src.guardrails.input_rail import InputRail
-from src.api.routes import search, query
+from src.api.routes import search, query, agent
+
 
 configure_logging()
 logger = logging.getLogger(__name__)
@@ -40,6 +41,10 @@ async def lifespan(app: FastAPI):
     app.state.grounding_checker = GroundingChecker()
     app.state.retrieval_rail   = RetrievalRail()
     app.state.input_rail       = InputRail()
+    
+    from src.agent.graph import agent_graph
+    app.state.agent_graph      = agent_graph
+
 
     logger.info("✅ All services initialised.")
     yield
@@ -58,6 +63,8 @@ app = FastAPI(
 
 app.include_router(search.router, tags=["Retrieval"])
 app.include_router(query.router, tags=["RAG Pipeline"])
+app.include_router(agent.router, prefix="/agent", tags=["Agentic Pipeline"])
+
 
 
 @app.get("/health", tags=["System"])
