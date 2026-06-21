@@ -1,6 +1,16 @@
+"""
+CLI entry point for the Enterprise RAG query pipeline.
+
+Usage:
+    python -m src.pipeline --query "..." --token "..."
+
+The heavy pipeline logic is shared with the FastAPI layer via src.core.orchestrator.
+This file is responsible only for: argument parsing, auth, and CLI-friendly output.
+"""
 import argparse
 import sys
-import logging
+
+from src.core.logging import configure_logging
 from src.auth.jwt_handler import verify_token
 from src.retrieval.hybrid_search import HybridSearchEngine
 from src.retrieval.reranker import CohereReranker
@@ -8,87 +18,72 @@ from src.generation.generator import OpenAIGenerator
 from src.generation.grounding import GroundingChecker
 from src.guardrails.retrieval_rail import RetrievalRail
 from src.guardrails.input_rail import InputRail, QueryBlockedError
+from src.core.orchestrator import run_rag_pipeline
 
-# Setup logging to console
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)]
-)
-logger = logging.getLogger("pipeline_cli")
+configure_logging()
 
-def run_pipeline(query: str, token: str, no_rail: bool = False):
-    print("\n" + "="*80)
-    print(" STARTING ENTERPRISE RAG E2E PIPELINE ")
-    print("="*80)
 
-    # 0. Input Rail — block malicious queries before any retrieval
-    print("\n[Step 0] Applying Input Rail (jailbreak / prompt-injection filter)...")
-    i_rail = InputRail()
+def run_pipeline(query: str, token: str, skip_rail: bool = False) -> None:
+    sep = "=" * 72
+    print(f"\n{sep}\n ENTERPRISE RAG — CLI PIPELINE\n{sep}")
+
+    # Step 0 — Input Rail
+    print("\n[0] Input Rail (jailbreak / injection filter)...")
     try:
-        i_rail.validate_query(query)
-        print("✅ Query passed Input Rail — no injection patterns detected.")
+        InputRail().validate_query(query)
+        print("    ✅ Query passed — no injection patterns detected.")
     except QueryBlockedError as exc:
-        print(f"❌ BLOCKED by Input Rail: {exc.reason}")
+        print(f"    ❌ BLOCKED: {exc.reason}")
         sys.exit(1)
 
-    # 1. Authenticate / Verify Token
-    print("\n[Step 1] Authenticating using Bearer Token...")
+    # Step 1 — Auth
+    print("\n[1] Authenticating bearer token...")
     user = verify_token(token)
     if not user:
-        print("❌ ERROR: Invalid or expired token. Authentication failed.")
+        print("    ❌ Invalid or expired token.")
         sys.exit(1)
-    print(f"✅ Success: Authenticated as user '{user.user_id}' (Dept: {user.department}, Role: {user.role})")
+    print(f"    ✅ Authenticated: {user.user_id!r} ({user.department}/{user.role})")
 
-    # 2. Retrieval with Hybrid Search
-    print("\n[Step 2] Executing Hybrid Search (Qdrant with RBAC)...")
-    search_engine = HybridSearchEngine()
-    # We retrieve 20 chunks initially for reranking pool
-    raw_results = search_engine.search(query_text=query, user=user, limit=20)
-    print(f"✅ Found {len(raw_results)} documents matching criteria (RBAC applied).")
-    for i, doc in enumerate(raw_results[:3]):
-        print(f"   [{i+1}] chunk_id: {doc['chunk_id']} | Source: {doc['source']} (Page: {doc['page']}) | RRF Score: {doc['score']:.4f}")
-    if len(raw_results) > 3:
-        print(f"   ... and {len(raw_results) - 3} more.")
+    # Steps 2-5 — shared orchestrator
+    print("\n[2-5] Running RAG pipeline (search → rerank → guard → generate → ground)...")
+    result = run_rag_pipeline(
+        query=query,
+        user=user,
+        engine=HybridSearchEngine(),
+        reranker=CohereReranker(),
+        generator=OpenAIGenerator(),
+        grounding_checker=GroundingChecker(),
+        retrieval_rail=RetrievalRail(),
+        skip_retrieval_rail=skip_rail,
+    )
 
-    # 3. Cohere Reranking
-    print("\n[Step 3] Reranking using Cohere (top 5)...")
-    reranker = CohereReranker()
-    reranked_results = reranker.rerank(query=query, documents=raw_results, top_n=5)
-    print(f"✅ Selected top {len(reranked_results)} documents after reranking:")
-    for i, doc in enumerate(reranked_results):
-        print(f"   [{i+1}] chunk_id: {doc['chunk_id']} | Source: {doc['source']} (Page: {doc['page']}) | Rerank Score: {doc['score']:.4f}")
+    # Output
+    results = result["results"]
+    print(f"\n    Retrieved {len(results)} safe chunks after full pipeline.")
+    for i, doc in enumerate(results):
+        print(
+            f"    [{i+1}] {doc.get('source')} p.{doc.get('page')} "
+            f"| score={doc.get('score', 0):.4f}"
+        )
 
-    # 3.5. Retrieval Rail (Prompt Injection Safety Filter)
-    if no_rail:
-        print("\n⚠️ Skipping Retrieval Rail (no-rail enabled).")
-    else:
-        print("\n[Step 3.5] Applying Retrieval Rail (Llama Guard via Groq)...")
-        rail = RetrievalRail()
-        reranked_results = rail.validate_chunks(reranked_results)
-        print(f"✅ Safe chunks remaining: {len(reranked_results)} / 5")
+    print("\n--- ANSWER ---")
+    print(result["answer"])
+    print("-" * 14)
 
-    # 4. OpenAI Generation
-    print("\n[Step 4] Generating cited response from OpenAI...")
-    generator = OpenAIGenerator()
-    answer = generator.generate(query=query, documents=reranked_results)
-    print("\n--- LLM GENERATED ANSWER ---")
-    print(answer)
-    print("----------------------------")
+    grounding = result["grounding"]
+    status = "GROUNDED" if grounding.get("grounded") else "NOT GROUNDED"
+    print(f"\n[Grounding] {status} — {grounding.get('reason', '')}")
+    print(f"\n{sep}\n")
 
-    # 5. Grounding Check
-    print("\n[Step 5] Performing Grounding Check on generated answer...")
-    checker = GroundingChecker()
-    grounding_res = checker.check_grounding(documents=reranked_results, answer=answer)
-    print(f"✅ Grounding Check Status: {'GROUNDED' if grounding_res['grounded'] else 'NOT GROUNDED'}")
-    print(f"   Reason: {grounding_res['reason']}")
-    print("\n" + "="*80 + "\n")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run End-to-End Enterprise RAG Ingestion & Query Pipeline")
-    parser.add_argument("--query", type=str, required=True, help="Query string to search and answer")
-    parser.add_argument("--token", type=str, required=True, help="JWT auth token containing RBAC claims")
-    parser.add_argument("--no-rail", action="store_true", help="Disable Retrieval Rail safety guardrail for demo purposes")
+    parser = argparse.ArgumentParser(
+        description="Enterprise RAG CLI — query pipeline"
+    )
+    parser.add_argument("--query",    required=True, help="Natural-language question")
+    parser.add_argument("--token",    required=True, help="JWT bearer token with RBAC claims")
+    parser.add_argument("--no-rail",  action="store_true",
+                        help="Skip Retrieval Rail (demo/debug only)")
     args = parser.parse_args()
 
-    run_pipeline(query=args.query, token=args.token, no_rail=args.no_rail)
+    run_pipeline(query=args.query, token=args.token, skip_rail=args.no_rail)

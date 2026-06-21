@@ -1,4 +1,5 @@
 import logging
+import uuid
 from typing import List, Dict, Any
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as rest
@@ -69,6 +70,4 @@ class QdrantIndexer:
 
     def _generate_uuid_id(self, chunk_id: str) -> str:
         """Generate a deterministic UUID from a chunk_id for idempotency."""
-        import uuid
-        # Namespace UUID avoids collisions
         return str(uuid.uuid5(uuid.NAMESPACE_DNS, chunk_id))

@@ -3,6 +3,7 @@ import logging
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
+from src.core.logging import configure_logging
 from src.ingestion.router import IngestionRouter
 from src.ingestion.chunker import DocumentChunker
 from src.ingestion.embedder import DocumentEmbedder
@@ -11,10 +12,7 @@ from src.ingestion.indexer import QdrantIndexer
 from src.guardrails.retrieval_rail import RetrievalRail
 
 # Config logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+configure_logging()
 logger = logging.getLogger("ingestion_pipeline")
 
 load_dotenv()

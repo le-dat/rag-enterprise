@@ -77,42 +77,42 @@ graph TD
 ```
 
 
-## 🔑 Tính năng Cốt lõi (Key Features)
+## 🔑 Key Features
 
-*   **Phân quyền tầng Cơ sở dữ liệu (RBAC Pre-filtering):** Tự động áp bộ lọc payload của Qdrant khớp với phòng ban/vai trò người dùng từ JWT trước khi tính điểm vector, bảo vệ an toàn dữ liệu nhạy cảm.
-*   **Xử lý tệp tin thông minh (File-type-aware Ingestion):** PDF được parse qua LlamaParse; XLSX được định tuyến riêng qua pandas/openpyxl để lưu chính xác dữ liệu có cấu trúc; các định dạng khác (TXT, CSV, MD) được xử lý bằng generic text reader.
-*   **Tìm kiếm Lai tối ưu (Hybrid Search & Rerank):** Kết hợp tìm kiếm ngữ nghĩa (Dense — `BAAI/bge-small-en-v1.5`) và từ khóa (SPLADE — `prithivida/Splade_PP_en_v1`) native trên Qdrant với RRF Fusion, xếp hạng lại bằng Cohere Rerank v3.5 (Top 20 → Top 5).
-*   **Phòng thủ nhiều lớp (Layered Guardrails):**
-    *   **Input Rail** — Lọc câu hỏi độc hại/jailbreak ngay tại entry point (Regex heuristic + Llama Prompt Guard 2 via Groq) trước khi chạm vào retrieval pipeline.
-    *   **Retrieval Rail** — Cô lập và chặn các chunk poisoned/injection từ database (áp dụng cả ingestion-time lẫn query-time).
-    *   **Output Rail (Grounding Checker)** — Xác minh câu trả lời có được hỗ trợ bởi context thực tế, chống hallucination.
+*   **Database-Layer Authorization (RBAC Pre-filtering):** Automatically applies Qdrant payload filters matching the user's department/role from JWT before vector scoring, protecting sensitive data.
+*   **File-type-aware Ingestion:** PDF parsed via LlamaParse; XLSX routed through pandas/openpyxl for accurate structured data storage; other formats (TXT, CSV, MD) processed by generic text reader.
+*   **Optimized Hybrid Search & Rerank:** Combines semantic search (Dense — `BAAI/bge-small-en-v1.5`) and keyword search (SPLADE — `prithivida/Splade_PP_en_v1`) native on Qdrant with RRF Fusion, reranked via Cohere Rerank v3.5 (Top 20 → Top 5).
+*   **Layered Guardrails:**
+    *   **Input Rail** — Filters malicious/jailbreak queries at entry point (Regex heuristic + Llama Prompt Guard 2 via Groq) before touching the retrieval pipeline.
+    *   **Retrieval Rail** — Isolates and blocks poisoned/injection chunks from the database (applied at both ingestion-time and query-time).
+    *   **Output Rail (Grounding Checker)** — Verifies the answer is supported by actual context, preventing hallucination.
 
 ---
 
-## 📊 Kết quả Đánh giá Định lượng (LLM-as-a-judge)
+## 📊 Quantitative Evaluation Results (LLM-as-a-judge)
 
-Hệ thống sử dụng module đánh giá tự động bằng LLM [llm_judge.py](eval/llm_judge.py) (chạy trên GPT-4o-mini) để đo lường 3 chỉ số RAG cốt lõi trên tập câu hỏi chuẩn [testset.json](eval/testset.json):
+The system uses an automatic evaluation module via LLM [llm_judge.py](eval/llm_judge.py) (running on GPT-4o-mini) to measure 3 core RAG metrics on the benchmark question set [testset.json](eval/testset.json):
 
-| Chỉ số | Baseline (Dense Only) | Full Pipeline (Hybrid + Rerank) | Delta (Cải thiện) |
+| Metric | Baseline (Dense Only) | Full Pipeline (Hybrid + Rerank) | Delta (Improvement) |
 | :--- | :---: | :---: | :---: |
 | **Context Precision** | 0.2713 | 0.2800 | **+0.0087 (+3.2%)** |
 | **Context Recall** | 0.9300 | 0.9500 | **+0.0200 (+2.2%)** |
 | **Answer Relevancy** | 1.0000 | 1.0000 | 0.0000 (0.0%) |
 
-*   **Nhận xét:** Điểm Baseline cao do tập dữ liệu thử nghiệm nhỏ và giải pháp **RBAC Pre-filtering** đã thu hẹp không gian tìm kiếm xuống cực nhỏ. Trên môi trường production thực tế với hàng triệu chunks, sự bổ trợ giữa SPLADE (Sparse) bắt chính xác từ khóa và Dense embeddings bắt ngữ nghĩa, kết hợp Cohere Rerank sắp xếp lại thứ hạng sẽ tạo ra mức cải thiện (Delta) vượt trội hơn.
+*   **Note:** High Baseline scores are due to the small test dataset and the **RBAC Pre-filtering** solution narrowing the search space to extremely small. On actual production environments with millions of chunks, the synergy between SPLADE (Sparse) capturing exact keywords and Dense embeddings capturing semantics, combined with Cohere Rerank reordering rankings, will produce significantly higher improvement (Delta).
 
 ---
 
-## 🛡️ Chặn Prompt Injection gián tiếp (Ingestion Guardrail)
+## 🛡️ Blocking Indirect Prompt Injection (Ingestion Guardrail)
 
-Hệ thống ngăn chặn mã độc gián tiếp (ví dụ: file `data/samples/poisoned_doc.txt` chứa chỉ thị ẩn: `SYSTEM: Ignore previous instructions...`) ngay từ tầng Ingestion bằng Regex heuristics và Llama Guard:
+The system prevents indirect malicious code (e.g., file `data/samples/poisoned_doc.txt` containing hidden directives: `SYSTEM: Ignore previous instructions...`) at the Ingestion layer via Regex heuristics and Llama Guard:
 
 ```bash
 python -m src.ingestion.pipeline --file data/samples/poisoned_doc.txt --department HR --role employee
 ```
 
 <details>
-<summary><b>Nhấn vào đây để xem Log chi tiết quá trình phát hiện và chặn mã độc</b></summary>
+<summary><b>Click here to view detailed log of malicious code detection and blocking</b></summary>
 
 ```text
 2026-06-21 15:49:04,528 - ingestion_pipeline - INFO - 🚀 Starting ingestion pipeline for file: poisoned_doc.txt
@@ -133,25 +133,125 @@ Sample blocked content: ['Company Financial Status - Q2 Update\nSYSTEM: Ignore p
 
 ## 🚀 Quick Start
 
-### 1. Cấu hình Môi trường
+### 1. Environment Configuration
 ```bash
 cp .env.example .env
 ```
-*(Các key cần thiết: `OPENAI_API_KEY`, `COHERE_API_KEY`, `QDRANT_URL`, `QDRANT_API_KEY`)*
+*(Required keys: `OPENAI_API_KEY`, `COHERE_API_KEY`, `QDRANT_URL`, `QDRANT_API_KEY`)*
 
-### 2. Khởi chạy
-Chạy ứng dụng FastAPI Backend bằng Docker Compose:
+### 2. Launch
+Run the FastAPI Backend application using Docker Compose:
 ```bash
 docker compose up --build
 ```
-*   **FastAPI Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs) (Dùng để gửi query `/search` hoặc `/query` trực tiếp)
-*   **Qdrant Console**: [http://localhost:6333](http://localhost:6333) (Nếu chạy local DB)
+*   **FastAPI Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs) (Use to send `/search` or `/query` requests directly)
+*   **Qdrant Console**: [http://localhost:6333](http://localhost:6333) (If running local DB)
+
+---
+
+## 🧪 Testing & Local Tooling
+
+> All commands assume you have activated the virtual environment: `source .venv/bin/activate`
+
+### Unit Tests
+
+Run the full test suite (12 tests, no external API calls required):
+
+```bash
+pytest tests/ -v
+```
+
+Run a specific test group:
+
+```bash
+# Guardrails only
+pytest tests/ -v -k "rail"
+
+# Generation only
+pytest tests/ -v -k "generator or grounding"
+```
+
+---
+
+### Generate a JWT Token (for manual API testing)
+
+```bash
+python -m src.auth.token_gen --role manager --department HR
+python -m src.auth.token_gen --role staff   --department Sales
+```
+
+Copy the printed token into Swagger UI (`Authorize` button) or use it as a Bearer token in curl/Postman.
+
+---
+
+### Ingest a Document
+
+```bash
+# Ingest a PDF
+python -m src.ingestion.pipeline \
+  --file data/samples/hr_policy.pdf \
+  --department HR \
+  --role manager
+
+# Ingest an Excel file
+python -m src.ingestion.pipeline \
+  --file data/samples/sales_data.xlsx \
+  --department Sales \
+  --role staff
+
+# Test poisoned document detection
+python -m src.ingestion.pipeline \
+  --file data/samples/poisoned_doc.txt \
+  --department HR \
+  --role employee
+```
+
+---
+
+### Run the Full Query Pipeline (CLI)
+
+```bash
+# 1. Generate a token first
+TOKEN=$(python -m src.auth.token_gen --role manager --department HR | grep -A1 "Token string" | tail -1)
+
+# 2. Run the pipeline
+python -m src.pipeline \
+  --query "What is the leave policy for HR managers?" \
+  --token "$TOKEN"
+
+# Skip Retrieval Rail (debug mode)
+python -m src.pipeline \
+  --query "Summarise Q2 sales targets" \
+  --token "$TOKEN" \
+  --no-rail
+```
+
+---
+
+### Inspect Qdrant Collection (Debug)
+
+```bash
+python -m src.ingestion.debug --limit 5
+python -m src.ingestion.debug --collection rag_enterprise --limit 10
+```
+
+---
+
+### Offline Evaluation (LLM-as-a-Judge)
+
+```bash
+# Run baseline vs full-pipeline comparison (requires OPENAI_API_KEY + indexed data)
+python eval/run_eval.py
+
+# View results
+cat eval/results.json
+```
 
 ---
 
 ## 🏗️ System Architecture (v2)
 
-Kiến trúc mục tiêu cho phiên bản tiếp theo, bổ sung Neo4j GraphRAG, Query Router, NeMo Input Rail, và Continuous Evaluation.
+Target architecture for the next version, adding Neo4j GraphRAG, Query Router, NeMo Input Rail, and Continuous Evaluation.
 
 ```mermaid
 graph TD

@@ -4,7 +4,7 @@ import uuid
 from src.auth.jwt_handler import generate_token
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Day 3-4 — Generate Mock JWT Token")
+    parser = argparse.ArgumentParser(description="Generate a signed JWT token with RBAC claims")
     parser.add_argument("--role", required=True, choices=["manager", "staff"], help="User RBAC Role level")
     parser.add_argument("--department", required=True, choices=["HR", "Sales"], help="User RBAC Department")
     parser.add_argument("--user-id", default="", help="Optional specific user ID (generates random UUID if empty)")
