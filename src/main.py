@@ -1,12 +1,13 @@
 import logging
-from fastapi import FastAPI, Depends, Query
-from pydantic import Field
+from fastapi import FastAPI, Depends, Query, Body, HTTPException
+from pydantic import BaseModel, Field
 from src.auth.middleware import get_current_user, UserContext
 from src.retrieval.hybrid_search import HybridSearchEngine
 from src.retrieval.reranker import CohereReranker
 from src.generation.generator import OpenAIGenerator
 from src.generation.grounding import GroundingChecker
 from src.guardrails.retrieval_rail import RetrievalRail
+from src.guardrails.input_rail import InputRail, QueryBlockedError
 
 # Setup logging
 logging.basicConfig(
@@ -20,6 +21,10 @@ app = FastAPI(
     description="Secure search engine featuring native hybrid retrieval and vector-level RBAC",
     version="1.0.0"
 )
+
+
+class QueryRequest(BaseModel):
+    q: str = Field(..., description="Query string to search and answer")
 
 search_engine = None
 reranker = None
@@ -51,6 +56,7 @@ def get_grounding_checker() -> GroundingChecker:
     return grounding_checker
 
 retrieval_rail = None
+input_rail = None
 
 def get_retrieval_rail() -> RetrievalRail:
     global retrieval_rail
@@ -58,18 +64,32 @@ def get_retrieval_rail() -> RetrievalRail:
         retrieval_rail = RetrievalRail()
     return retrieval_rail
 
+def get_input_rail() -> InputRail:
+    global input_rail
+    if input_rail is None:
+        input_rail = InputRail()
+    return input_rail
+
 @app.get("/search")
 def search(
-    q: str = Query(..., description="Query string to search"),  
+    q: str = Query(..., description="Query string to search"),
     limit: int = Query(5, ge=1, le=50, description="Max results to return"),
     current_user: UserContext = Depends(get_current_user),
-    engine: HybridSearchEngine = Depends(get_search_engine)
+    engine: HybridSearchEngine = Depends(get_search_engine),
+    i_rail: InputRail = Depends(get_input_rail)
 ):
     """
     Secure search endpoint protected by JWT Bearer token.
-    Applies RBAC filtering before scoring points.
+    Applies Input Rail (jailbreak/injection filter) then RBAC filtering before scoring points.
     """
     logger.info(f"API Request by {current_user.user_id} on route /search?q={q}")
+
+    # Input Rail — block malicious queries before any retrieval
+    try:
+        i_rail.validate_query(q)
+    except QueryBlockedError as exc:
+        raise HTTPException(status_code=400, detail=f"Query blocked by security policy: {exc.reason}")
+
     results = engine.search(
         query_text=q,
         user=current_user,
@@ -87,16 +107,18 @@ def search(
 
 @app.post("/query")
 def query_pipeline(
-    q: str = Field(..., description="Query string to search and answer"),
+    body: QueryRequest = Body(...),
     current_user: UserContext = Depends(get_current_user),
     engine: HybridSearchEngine = Depends(get_search_engine),
     cohere_rerank: CohereReranker = Depends(get_reranker),
     llm_gen: OpenAIGenerator = Depends(get_generator),
     grounding: GroundingChecker = Depends(get_grounding_checker),
-    rail: RetrievalRail = Depends(get_retrieval_rail)
+    rail: RetrievalRail = Depends(get_retrieval_rail),
+    i_rail: InputRail = Depends(get_input_rail)
 ):
     """
     Secure endpoint running the full RAG pipeline:
+    0. Input Rail (jailbreak / prompt-injection filter)
     1. Retrieval (Hybrid Search with RBAC filter) -> Returns top 20
     2. Reranking (Cohere Reranker) -> Selects top 5
     3. Retrieval Rail (Llama Guard via Groq) -> Blocks unsafe chunks
@@ -104,38 +126,44 @@ def query_pipeline(
     5. Grounding Check (Verify answer against retrieved sources)
     """
     logger.info(f"RAG query request by user {current_user.user_id} on route /query")
-    
+
+    # 0. Input Rail — block malicious queries before any retrieval
+    try:
+        i_rail.validate_query(body.q)
+    except QueryBlockedError as exc:
+        raise HTTPException(status_code=400, detail=f"Query blocked by security policy: {exc.reason}")
+
     # 1. Search (retrieve up to 20 candidates for reranker pool)
     raw_results = engine.search(
-        query_text=q,
+        query_text=body.q,
         user=current_user,
         limit=20
     )
-    
+
     # 2. Rerank (keep top 5)
     reranked_results = cohere_rerank.rerank(
-        query=q,
+        query=body.q,
         documents=raw_results,
         top_n=5
     )
-    
+
     # 3. Retrieval Rail (Prompt Injection Safety Filter)
     safe_results = rail.validate_chunks(reranked_results)
-    
+
     # 4. Generate Answer
     answer = llm_gen.generate(
-        query=q,
+        query=body.q,
         documents=safe_results
     )
-    
+
     # 5. Grounding Check
     grounding_res = grounding.check_grounding(
         documents=safe_results,
         answer=answer
     )
-    
+
     return {
-        "query": q,
+        "query": body.q,
         "answer": answer,
         "grounding": grounding_res,
         "results": safe_results,

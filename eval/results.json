@@ -1,27 +1,27 @@
 {
-  "eval_date": "2026-06-20T17:05:41.627240+00:00",
+  "eval_date": "2026-06-21T08:46:16.749615+00:00",
   "testset": "eval/testset.json",
   "total_questions": 20,
   "baseline": {
     "mode": "dense_only_no_rerank",
-    "avg_context_precision": 0.2,
-    "avg_context_recall": 1.0,
-    "avg_answer_relevancy": 0.669
+    "avg_context_precision": 0.2713,
+    "avg_context_recall": 0.93,
+    "avg_answer_relevancy": 1.0
   },
   "full_pipeline": {
     "mode": "hybrid_search_plus_cohere_rerank",
-    "avg_context_precision": 0.2,
-    "avg_context_recall": 1.0,
-    "avg_answer_relevancy": 0.669
+    "avg_context_precision": 0.28,
+    "avg_context_recall": 0.95,
+    "avg_answer_relevancy": 1.0
   },
   "delta": {
     "avg_context_precision": {
-      "absolute": 0.0,
-      "percent": 0.0
+      "absolute": 0.0087,
+      "percent": 3.2
     },
     "avg_context_recall": {
-      "absolute": 0.0,
-      "percent": 0.0
+      "absolute": 0.02,
+      "percent": 2.2
     },
     "avg_answer_relevancy": {
       "absolute": 0.0,
@@ -34,9 +34,9 @@
         "question": "How many days of paid annual leave are full-time employees entitled to per year?",
         "department": "HR",
         "mode": "baseline",
-        "context_precision": 0.2,
-        "context_recall": 1.0,
-        "answer_relevancy": 0.8333,
+        "context_precision": 0.3333,
+        "context_recall": 0.0,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_001",
           "hr_002",
@@ -50,9 +50,9 @@
         "question": "How far in advance must leave be approved by the manager?",
         "department": "HR",
         "mode": "baseline",
-        "context_precision": 0.2,
+        "context_precision": 0.3333,
         "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_001",
           "hr_005",
@@ -68,7 +68,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.5,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_001",
           "hr_002",
@@ -76,7 +76,7 @@
           "hr_009",
           "hr_005"
         ],
-        "answer_preview": "Employees can carry over up to 5 days of unused annual leave into the next calendar year [hr_001]."
+        "answer_preview": "Employees can carry over up to 5 unused leave days into the next calendar year [hr_001]."
       },
       {
         "question": "How many days of paid sick leave can employees take annually?",
@@ -84,7 +84,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.6667,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_002",
           "hr_001",
@@ -100,7 +100,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_002",
           "hr_001",
@@ -114,9 +114,9 @@
         "question": "When are annual performance reviews conducted?",
         "department": "HR",
         "mode": "baseline",
-        "context_precision": 0.2,
-        "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "context_precision": 0.6,
+        "context_recall": 0.8,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_003",
           "hr_004",
@@ -132,7 +132,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.8,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_004",
           "hr_010",
@@ -148,7 +148,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.5,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_005",
           "hr_001",
@@ -164,7 +164,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.8,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_006",
           "hr_003",
@@ -180,7 +180,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_010",
           "hr_001",
@@ -188,7 +188,7 @@
           "hr_policy_txt_000_7733d7e3",
           "hr_003"
         ],
-        "answer_preview": "Each employee receives an annual learning budget of $1,500 for external training, conferences, or certifications [hr_010]."
+        "answer_preview": "Each employee receives an annual learning budget of $1,500 for external training, conferences, or certifications. Requests must be submitted via the HR portal and approved by the department head. Unus"
       },
       {
         "question": "What is the quarterly sales target for the North America region in Q2 2024?",
@@ -196,7 +196,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.8571,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_001",
           "sales_data_xlsx_001_eee87f4c",
@@ -210,9 +210,9 @@
         "question": "What commission rate applies above 110% quota attainment?",
         "department": "Sales",
         "mode": "baseline",
-        "context_precision": 0.2,
+        "context_precision": 0.4,
         "context_recall": 1.0,
-        "answer_relevancy": 0.8,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_002",
           "sales_001",
@@ -228,7 +228,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_002",
           "sales_001",
@@ -244,7 +244,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.25,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_003",
           "sales_data_xlsx_000_d7d71870",
@@ -260,7 +260,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.5,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_004",
           "sales_010",
@@ -274,9 +274,9 @@
         "question": "What is the maximum discount an Account Executive can offer without approval?",
         "department": "Sales",
         "mode": "baseline",
-        "context_precision": 0.2,
-        "context_recall": 1.0,
-        "answer_relevancy": 0.8571,
+        "context_precision": 0.76,
+        "context_recall": 0.8,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_005",
           "sales_data_xlsx_000_d7d71870",
@@ -292,7 +292,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.6667,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_006",
           "sales_003",
@@ -308,7 +308,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.3333,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_007",
           "sales_002",
@@ -324,7 +324,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.6667,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_008",
           "sales_001",
@@ -332,7 +332,7 @@
           "sales_data_xlsx_001_eee87f4c",
           "sales_data_xlsx_000_d7d71870"
         ],
-        "answer_preview": "The win rate against Competitor A in Q1 2024 improved to 68%, up from 54% in Q4 2023, following new security compliance messaging [sales_008]."
+        "answer_preview": "The win rate against Competitor A in Q1 2024 improved to 68%, up from 54% in Q4 2023 [sales_008]."
       },
       {
         "question": "How many days after contract signature must the CSM introduction call occur?",
@@ -340,7 +340,7 @@
         "mode": "baseline",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.6,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_010",
           "sales_004",
@@ -356,9 +356,9 @@
         "question": "How many days of paid annual leave are full-time employees entitled to per year?",
         "department": "HR",
         "mode": "full",
-        "context_precision": 0.2,
-        "context_recall": 1.0,
-        "answer_relevancy": 0.8333,
+        "context_precision": 0.4,
+        "context_recall": 0.0,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_001",
           "hr_policy_txt_000_7733d7e3",
@@ -372,9 +372,9 @@
         "question": "How far in advance must leave be approved by the manager?",
         "department": "HR",
         "mode": "full",
-        "context_precision": 0.2,
+        "context_precision": 0.4,
         "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_001",
           "hr_policy_txt_000_7733d7e3",
@@ -390,7 +390,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.5,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_001",
           "hr_002",
@@ -398,7 +398,7 @@
           "hr_009",
           "hr_policy_txt_000_7733d7e3"
         ],
-        "answer_preview": "Employees can carry over up to 5 unused leave days into the next calendar year [hr_001]."
+        "answer_preview": "According to the annual leave policy, unused leave can be carried over up to 5 days into the next calendar year [hr_001]."
       },
       {
         "question": "How many days of paid sick leave can employees take annually?",
@@ -406,7 +406,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.6667,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_002",
           "hr_001",
@@ -422,7 +422,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_002",
           "hr_001",
@@ -436,9 +436,9 @@
         "question": "When are annual performance reviews conducted?",
         "department": "HR",
         "mode": "full",
-        "context_precision": 0.2,
+        "context_precision": 0.4,
         "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_003",
           "hr_policy_txt_000_7733d7e3",
@@ -446,7 +446,7 @@
           "hr_006",
           "hr_005"
         ],
-        "answer_preview": "Annual performance reviews are conducted in Q4, which includes a self-assessment, peer review, and manager evaluation, with employees rated on a 5-point scale across various competency areas [hr_003]."
+        "answer_preview": "Annual performance reviews are conducted in Q4, specifically including a self-assessment, peer review, and manager evaluation, with employees rated on a 5-point scale across various competency areas ["
       },
       {
         "question": "What is the merit increase percentage for employees who meet expectations?",
@@ -454,7 +454,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.8,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_004",
           "hr_policy_txt_000_7733d7e3",
@@ -470,7 +470,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.5,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_005",
           "hr_policy_txt_000_7733d7e3",
@@ -478,7 +478,7 @@
           "hr_002",
           "hr_009"
         ],
-        "answer_preview": "Employees may work remotely up to 3 days per week with manager approval. A minimum of 2 days per week in-office is required for all staff [hr_005]."
+        "answer_preview": "Employees may work remotely up to 3 days per week with manager approval, but a minimum of 2 days per week in-office is required for all staff [hr_005]."
       },
       {
         "question": "What are the stages of the company's progressive discipline framework?",
@@ -486,7 +486,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.8,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_006",
           "hr_003",
@@ -502,7 +502,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_010",
           "hr_001",
@@ -518,7 +518,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.8571,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_001",
           "sales_009",
@@ -532,9 +532,9 @@
         "question": "What commission rate applies above 110% quota attainment?",
         "department": "Sales",
         "mode": "full",
-        "context_precision": 0.2,
+        "context_precision": 0.4,
         "context_recall": 1.0,
-        "answer_relevancy": 0.8,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_002",
           "sales_001",
@@ -550,7 +550,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.75,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_002",
           "sales_001",
@@ -566,7 +566,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.25,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_003",
           "sales_data_xlsx_000_d7d71870",
@@ -582,7 +582,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.5,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_004",
           "sales_010",
@@ -596,9 +596,9 @@
         "question": "What is the maximum discount an Account Executive can offer without approval?",
         "department": "Sales",
         "mode": "full",
-        "context_precision": 0.2,
+        "context_precision": 1.0,
         "context_recall": 1.0,
-        "answer_relevancy": 0.8571,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_005",
           "sales_data_xlsx_002_829fd98c",
@@ -614,7 +614,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.6667,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_006",
           "sales_004",
@@ -630,7 +630,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.3333,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_007",
           "sales_002",
@@ -646,7 +646,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.6667,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_008",
           "sales_001",
@@ -662,7 +662,7 @@
         "mode": "full",
         "context_precision": 0.2,
         "context_recall": 1.0,
-        "answer_relevancy": 0.6,
+        "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "sales_010",
           "sales_002",

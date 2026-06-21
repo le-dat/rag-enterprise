@@ -21,7 +21,6 @@ from datetime import datetime, timezone
 
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient
-from qdrant_client.http import models as rest
 from fastembed import TextEmbedding
 
 from src.config import settings
@@ -30,6 +29,7 @@ from src.retrieval.hybrid_search import HybridSearchEngine
 from src.retrieval.reranker import CohereReranker
 from src.retrieval.rbac_filter import build_qdrant_rbac_filter
 from src.generation.generator import OpenAIGenerator
+from eval.llm_judge import LLMJudge
 
 load_dotenv()
 
@@ -158,7 +158,7 @@ def score_answer_relevancy(answer: str, question: str) -> float:
 
 # ── Single test item evaluation ───────────────────────────────────────────────
 
-def evaluate_item(item: dict, mode: str, search_engine=None, reranker=None, generator=None) -> dict:
+def evaluate_item(item: dict, mode: str, search_engine=None, reranker=None, generator=None, judge=None) -> dict:
     """
     Run one testset item through the pipeline in the given mode.
 
@@ -187,9 +187,14 @@ def evaluate_item(item: dict, mode: str, search_engine=None, reranker=None, gene
     answer = generator.generate(query=question, documents=retrieved)
 
     # Step 3: Score
-    precision = score_context_precision(retrieved, source_chunk_ids)
-    recall = score_context_recall(retrieved, source_chunk_ids)
-    relevancy = score_answer_relevancy(answer, question)
+    if judge:
+        precision = judge.evaluate_context_precision(question, retrieved)
+        recall = judge.evaluate_context_recall(question, retrieved, ground_truth)
+        relevancy = judge.evaluate_answer_relevancy(question, answer)
+    else:
+        precision = score_context_precision(retrieved, source_chunk_ids)
+        recall = score_context_recall(retrieved, source_chunk_ids)
+        relevancy = score_answer_relevancy(answer, question)
 
     return {
         "question": question,
@@ -212,10 +217,11 @@ def run_eval(testset_path: str, output_path: str):
     print("=" * 70)
 
     # Initialize shared components for full pipeline (reused across questions)
-    print("🔧 Initializing full pipeline components (HybridSearch, Reranker, Generator)...")
+    print("🔧 Initializing full pipeline components (HybridSearch, Reranker, Generator, LLMJudge)...")
     search_engine = HybridSearchEngine()
     reranker = CohereReranker()
     generator = OpenAIGenerator()
+    judge = LLMJudge()
     print("✅ Components ready.\n")
 
     baseline_results = []
@@ -227,7 +233,7 @@ def run_eval(testset_path: str, output_path: str):
 
         # Baseline
         try:
-            b = evaluate_item(item, "baseline", generator=generator)
+            b = evaluate_item(item, "baseline", generator=generator, judge=judge)
             baseline_results.append(b)
             print(f"       baseline → precision={b['context_precision']:.2f}  recall={b['context_recall']:.2f}  relevancy={b['answer_relevancy']:.2f}")
         except Exception as e:
@@ -236,7 +242,7 @@ def run_eval(testset_path: str, output_path: str):
 
         # Full pipeline
         try:
-            f = evaluate_item(item, "full", search_engine=search_engine, reranker=reranker, generator=generator)
+            f = evaluate_item(item, "full", search_engine=search_engine, reranker=reranker, generator=generator, judge=judge)
             full_results.append(f)
             print(f"       full     → precision={f['context_precision']:.2f}  recall={f['context_recall']:.2f}  relevancy={f['answer_relevancy']:.2f}")
         except Exception as e:

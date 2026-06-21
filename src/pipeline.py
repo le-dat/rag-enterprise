@@ -7,6 +7,7 @@ from src.retrieval.reranker import CohereReranker
 from src.generation.generator import OpenAIGenerator
 from src.generation.grounding import GroundingChecker
 from src.guardrails.retrieval_rail import RetrievalRail
+from src.guardrails.input_rail import InputRail, QueryBlockedError
 
 # Setup logging to console
 logging.basicConfig(
@@ -20,6 +21,16 @@ def run_pipeline(query: str, token: str, no_rail: bool = False):
     print("\n" + "="*80)
     print(" STARTING ENTERPRISE RAG E2E PIPELINE ")
     print("="*80)
+
+    # 0. Input Rail — block malicious queries before any retrieval
+    print("\n[Step 0] Applying Input Rail (jailbreak / prompt-injection filter)...")
+    i_rail = InputRail()
+    try:
+        i_rail.validate_query(query)
+        print("✅ Query passed Input Rail — no injection patterns detected.")
+    except QueryBlockedError as exc:
+        print(f"❌ BLOCKED by Input Rail: {exc.reason}")
+        sys.exit(1)
 
     # 1. Authenticate / Verify Token
     print("\n[Step 1] Authenticating using Bearer Token...")

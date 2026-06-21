@@ -8,6 +8,8 @@ __pycache__/
 *.so
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
+
 
 # Virtualenv
 venv/
@@ -22,4 +24,3 @@ venv/
 .claude/
 .agents/
 docs/
-# data/
