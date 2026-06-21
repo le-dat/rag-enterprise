@@ -33,7 +33,7 @@ export default function WelcomeBanner({ onSelectSuggestion }: WelcomeBannerProps
   ];
 
   return (
-    <div className="h-full flex flex-col justify-center items-center text-center max-w-lg mx-auto py-12">
+    <div className="h-full flex flex-col justify-center items-center text-center max-w-xs mx-auto py-6 md:max-w-lg md:py-12">
       <div className="h-12 w-12 border border-zinc-800 bg-zinc-900 flex items-center justify-center mb-6 rounded-[2px]">
         <svg className="h-6 w-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

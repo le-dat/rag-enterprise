@@ -52,7 +52,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-zinc-950 text-zinc-100 flex flex-col justify-center items-center p-6 relative overflow-hidden">
+    <main className="min-h-screen w-full bg-zinc-950 text-zinc-100 flex flex-col justify-center items-center p-4 md:p-6 relative overflow-hidden">
       {/* Background Matrix/Cyber grid effect */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
 
@@ -60,7 +60,7 @@ export default function LoginPage() {
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-[2px] p-8 relative z-10 shadow-2xl">
+      <div className="w-full max-w-xs md:max-w-md bg-zinc-900 border border-zinc-800 rounded-[2px] p-6 md:p-8 relative z-10 shadow-2xl">
         {/* Top Status Header */}
         <div className="flex justify-between items-center mb-6 border-b border-zinc-800 pb-4">
           <div className="flex items-center gap-2">
@@ -110,7 +110,7 @@ export default function LoginPage() {
             <label className="block text-xs font-mono tracking-wide text-zinc-400 uppercase">
               Department Context (RBAC)
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
                 { value: "HR", label: "HR Department" },
                 { value: "Sales", label: "Sales Department" },
@@ -136,7 +136,7 @@ export default function LoginPage() {
             <label className="block text-xs font-mono tracking-wide text-zinc-400 uppercase">
               Role Authority Level (RBAC)
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
                 { value: "manager", label: "Manager" },
                 { value: "staff", label: "Staff / Employee" },

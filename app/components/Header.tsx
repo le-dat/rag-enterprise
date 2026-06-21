@@ -7,7 +7,7 @@ interface HeaderProps {
 
 export default function Header({ userInfo, onLogout }: HeaderProps) {
   return (
-    <header className="border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-md py-5 px-8 relative z-10 flex justify-between items-center">
+    <header className="border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-md py-3 px-4 md:py-5 md:px-8 relative z-10 flex justify-between items-center">
       <div className="flex items-center gap-3">
         <div className="h-6 w-6 bg-emerald-500 flex justify-center items-center rounded-[2px]">
           <span className="text-lg font-bold text-zinc-950 font-mono">R</span>

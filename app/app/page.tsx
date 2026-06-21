@@ -241,7 +241,7 @@ export default function Home() {
       <Header userInfo={userInfo} onLogout={handleLogout} />
 
       {/* Chat Area */}
-      <section className="flex-1 w-full max-w-4xl mx-auto flex flex-col p-6 relative z-10 overflow-hidden">
+      <section className="flex-1 w-full max-w-xs mx-auto md:max-w-4xl flex flex-col p-3 md:p-6 relative z-10 overflow-hidden">
         <div className="flex-1 overflow-y-auto pr-2 space-y-6 scrollbar-thin scrollbar-thumb-zinc-800">
           {messages.length === 0 ? (
             <WelcomeBanner onSelectSuggestion={handleSuggest} />

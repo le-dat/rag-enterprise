@@ -35,7 +35,7 @@ function getToolDisplay(name: string, args: any) {
 
 export default function ToolStepper({ tools }: ToolStepperProps) {
   return (
-    <div className="w-full mt-3 pl-4 border-l border-zinc-800 space-y-3">
+    <div className="w-full mt-3 pl-2 md:pl-4 border-l border-zinc-800 space-y-3">
       <p className="text-[9px] font-mono tracking-widest text-zinc-500 uppercase">
         API Pipeline Steps
       </p>

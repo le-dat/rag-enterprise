@@ -17,7 +17,7 @@ export default function MessageItem({ msg }: MessageItemProps) {
 
       {/* Message block */}
       <div
-        className={`max-w-3xl rounded-[2px] p-4 font-sans text-sm relative ${
+        className={`max-w-xs rounded-[2px] p-3 md:max-w-3xl md:p-4 font-sans text-sm relative ${
           isUser
             ? "bg-zinc-900 border border-zinc-800 text-zinc-100"
             : "bg-zinc-900/40 border border-zinc-900 text-zinc-200 w-full"
