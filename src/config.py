@@ -33,5 +33,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day
 
+    # ── Demo / Simulation Mode ────────────────────────────────
+    DEMO_MODE: bool = False
+
 # Singleton settings instance
 settings = Settings()

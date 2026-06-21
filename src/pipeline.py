@@ -27,6 +27,18 @@ def run_pipeline(query: str, token: str, skip_rail: bool = False) -> None:
     sep = "=" * 72
     print(f"\n{sep}\n ENTERPRISE RAG — CLI PIPELINE\n{sep}")
 
+    from src.config import settings
+
+    if settings.DEMO_MODE:
+        from src.core.demo import (
+            MockSearchEngine as HybridSearchEngine,
+            MockReranker as CohereReranker,
+            MockGenerator as OpenAIGenerator,
+            MockGroundingChecker as GroundingChecker,
+            MockRetrievalRail as RetrievalRail,
+            MockInputRail as InputRail,
+        )
+
     # Step 0 — Input Rail
     print("\n[0] Input Rail (jailbreak / injection filter)...")
     try:
