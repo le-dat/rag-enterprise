@@ -65,7 +65,9 @@ export default function LoginPage() {
         <div className="flex justify-between items-center mb-6 border-b border-zinc-800 pb-4">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] tracking-[0.2em] font-mono text-zinc-400 uppercase">SYS_PORTAL_V1</span>
+            <span className="text-[10px] tracking-[0.2em] font-mono text-zinc-400 uppercase">
+              SYS_PORTAL_V1
+            </span>
           </div>
           <span className="text-[10px] font-mono text-emerald-500 uppercase bg-emerald-950/40 px-2 py-0.5 border border-emerald-800/50 rounded-[1px]">
             SECURE ACCESS
