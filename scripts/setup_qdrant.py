@@ -1,8 +1,8 @@
 """
-Day 0 — Qdrant Setup Script
+Qdrant Setup Script
 
-Creates the `rag_enterprise` collection with dense (384-dim) + sparse (BM25)
-vectors and loads all 20 fixture chunks from fixtures/mock_chunks.json.
+Creates the `rag_enterprise` collection with dense (384-dim) + sparse (SPLADE)
+vectors and loads all fixture chunks from fixtures/mock_chunks.json.
 
 Usage:
     python -m scripts.setup_qdrant
@@ -117,7 +117,6 @@ def load_fixtures(client: QdrantClient, fixtures_path: Path) -> None:
 
 
 def verify(client: QdrantClient) -> bool:
-    """Run the Day 0 VERIFY checklist."""
     count = client.count(collection_name=COLLECTION_NAME).count
     print("\n─── VERIFY ─────────────────────────────────")
     print(f"  Total chunks : {count}")
@@ -149,7 +148,7 @@ def verify(client: QdrantClient) -> bool:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Day 0 — Qdrant setup & fixture load")
+    parser = argparse.ArgumentParser(description="Qdrant collection setup and fixture loader")
     parser.add_argument("--verify-only", action="store_true", help="Skip setup, only run VERIFY")
     parser.add_argument(
         "--fixtures",

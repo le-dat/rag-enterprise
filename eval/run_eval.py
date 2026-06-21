@@ -1,8 +1,4 @@
 """
-eval/run_eval.py
-
-Day 7: Quantitative Evaluation — Baseline (Dense-Only) vs Full Pipeline (Hybrid + Rerank).
-
 Metrics:
     - context_precision  : % retrieved chunks that are truly relevant
     - context_recall     : % of required info covered by retrieved chunks

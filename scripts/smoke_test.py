@@ -1,6 +1,4 @@
 """
-Day 3-4 — Automated Integration Test for RBAC & Hybrid Search
-
 Generates mock tokens for:
 1. HR Manager
 2. HR Staff
