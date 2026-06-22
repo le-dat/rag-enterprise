@@ -1,27 +1,27 @@
 {
-  "eval_date": "2026-06-21T11:47:05.399651+00:00",
+  "eval_date": "2026-06-22T03:49:26.930617+00:00",
   "testset": "eval/testset.json",
   "total_questions": 20,
   "baseline": {
     "mode": "dense_only_no_rerank",
     "avg_context_precision": 0.258,
-    "avg_context_recall": 0.955,
+    "avg_context_recall": 0.915,
     "avg_answer_relevancy": 1.0
   },
   "full_pipeline": {
     "mode": "hybrid_search_plus_cohere_rerank",
-    "avg_context_precision": 0.29,
+    "avg_context_precision": 0.28,
     "avg_context_recall": 0.95,
     "avg_answer_relevancy": 1.0
   },
   "delta": {
     "avg_context_precision": {
-      "absolute": 0.032,
-      "percent": 12.4
+      "absolute": 0.022,
+      "percent": 8.5
     },
     "avg_context_recall": {
-      "absolute": -0.005,
-      "percent": -0.5
+      "absolute": 0.035,
+      "percent": 3.8
     },
     "avg_answer_relevancy": {
       "absolute": 0.0,
@@ -35,7 +35,7 @@
         "department": "HR",
         "mode": "baseline",
         "context_precision": 0.3333,
-        "context_recall": 0.5,
+        "context_recall": 0.0,
         "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_001",
@@ -76,7 +76,7 @@
           "hr_009",
           "hr_005"
         ],
-        "answer_preview": "Employees can carry over up to 5 days of unused annual leave into the next calendar year [hr_001]."
+        "answer_preview": "Employees can carry over up to 5 unused leave days into the next calendar year [hr_001]."
       },
       {
         "question": "How many days of paid sick leave can employees take annually?",
@@ -115,7 +115,7 @@
         "department": "HR",
         "mode": "baseline",
         "context_precision": 0.3333,
-        "context_recall": 0.8,
+        "context_recall": 0.5,
         "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
           "hr_003",
@@ -220,7 +220,7 @@
           "sales_003",
           "sales_data_xlsx_001_eee87f4c"
         ],
-        "answer_preview": "The commission rate that applies above 110% quota attainment is 12% for attainment from 100% to 150%, and it increases to 16% for attainment above 150% [sales_002]."
+        "answer_preview": "The commission rate that applies above 110% quota attainment is 12% for attainment from 100% to 150%, and 16% for attainment above 150% [sales_002]."
       },
       {
         "question": "What is the base commission rate for sales up to 100% quota attainment?",
@@ -436,7 +436,7 @@
         "question": "When are annual performance reviews conducted?",
         "department": "HR",
         "mode": "full",
-        "context_precision": 0.6,
+        "context_precision": 0.4,
         "context_recall": 1.0,
         "answer_relevancy": 1.0,
         "retrieved_chunk_ids": [
@@ -446,7 +446,7 @@
           "hr_006",
           "hr_005"
         ],
-        "answer_preview": "Annual performance reviews are conducted in Q4, specifically including self-assessment, peer review, and manager evaluation, with employees rated on a 5-point scale across various competency areas [hr"
+        "answer_preview": "Annual performance reviews are conducted in Q4, specifically including a self-assessment, peer review, and manager evaluation, with employees rated on a 5-point scale across various competency areas ["
       },
       {
         "question": "What is the merit increase percentage for employees who meet expectations?",
@@ -478,7 +478,7 @@
           "hr_002",
           "hr_009"
         ],
-        "answer_preview": "Employees may work remotely up to 3 days per week with manager approval, but a minimum of 2 days per week in-office is required for all staff [hr_005]."
+        "answer_preview": "Employees may work remotely up to 3 days per week with manager approval. A minimum of 2 days per week in-office is required for all staff [hr_005]."
       },
       {
         "question": "What are the stages of the company's progressive discipline framework?",
@@ -654,7 +654,7 @@
           "sales_003",
           "sales_005"
         ],
-        "answer_preview": "The win rate against Competitor A in Q1 2024 improved to 68%, up from 54% in Q4 2023 [sales_008]."
+        "answer_preview": "The win rate against Competitor A in Q1 2024 improved to 68%, up from 54% in Q4 2023, following new security compliance messaging [sales_008]."
       },
       {
         "question": "How many days after contract signature must the CSM introduction call occur?",
