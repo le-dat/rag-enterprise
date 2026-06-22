@@ -19,7 +19,7 @@ def test_create_leave_request_tool_hr_success():
             "user": UserContext(user_id="hr_manager_1", role="manager", department="HR")
         }
     }
-    result = create_leave_request_tool.invoke(
+    result_str = create_leave_request_tool.invoke(
         {
             "employee_id": "emp_101",
             "start_date": "2026-07-01",
@@ -28,10 +28,14 @@ def test_create_leave_request_tool_hr_success():
         },
         config=config,
     )
-    assert "Success" in result
-    assert "emp_101" in result
-    assert "2026-07-01 to 2026-07-05" in result
-    assert "HR Manager/Staff" in result
+    import json
+    result = json.loads(result_str)
+    assert result["status"] == "success"
+    assert "Leave request created successfully" in result["message"]
+    assert result["details"]["employee_id"] == "emp_101"
+    assert result["details"]["start_date"] == "2026-07-01"
+    assert result["details"]["end_date"] == "2026-07-05"
+    assert result["details"]["created_by"] == "hr_manager_1"
 
 
 def test_create_leave_request_tool_sales_denied():
@@ -40,7 +44,7 @@ def test_create_leave_request_tool_sales_denied():
             "user": UserContext(user_id="sales_rep_1", role="staff", department="Sales")
         }
     }
-    result = create_leave_request_tool.invoke(
+    result_str = create_leave_request_tool.invoke(
         {
             "employee_id": "emp_101",
             "start_date": "2026-07-01",
@@ -49,8 +53,11 @@ def test_create_leave_request_tool_sales_denied():
         },
         config=config,
     )
-    assert "Access Denied" in result
-    assert "restricted to HR department" in result
+    import json
+    result = json.loads(result_str)
+    assert result["status"] == "denied"
+    assert result["error"] == "Access Denied"
+    assert "restricted to HR department" in result["reason"]
 
 
 # ── 2. update_crm_opportunity_tool Tests ──────────────────────────────────────
@@ -61,7 +68,7 @@ def test_update_crm_opportunity_tool_sales_success():
             "user": UserContext(user_id="sales_lead", role="manager", department="Sales")
         }
     }
-    result = update_crm_opportunity_tool.invoke(
+    result_str = update_crm_opportunity_tool.invoke(
         {
             "opp_id": "opp_999",
             "stage": "Proposal",
@@ -69,10 +76,13 @@ def test_update_crm_opportunity_tool_sales_success():
         },
         config=config,
     )
-    assert "Success" in result
-    assert "opp_999" in result
-    assert "Proposal" in result
-    assert "Sales Agent" in result
+    import json
+    result = json.loads(result_str)
+    assert result["status"] == "success"
+    assert "updated successfully" in result["message"]
+    assert result["details"]["opp_id"] == "opp_999"
+    assert result["details"]["stage"] == "Proposal"
+    assert result["details"]["updated_by"] == "sales_lead"
 
 
 def test_update_crm_opportunity_tool_hr_denied():
@@ -81,7 +91,7 @@ def test_update_crm_opportunity_tool_hr_denied():
             "user": UserContext(user_id="hr_coordinator", role="staff", department="HR")
         }
     }
-    result = update_crm_opportunity_tool.invoke(
+    result_str = update_crm_opportunity_tool.invoke(
         {
             "opp_id": "opp_999",
             "stage": "Proposal",
@@ -89,8 +99,11 @@ def test_update_crm_opportunity_tool_hr_denied():
         },
         config=config,
     )
-    assert "Access Denied" in result
-    assert "restricted to Sales department" in result
+    import json
+    result = json.loads(result_str)
+    assert result["status"] == "denied"
+    assert result["error"] == "Access Denied"
+    assert "restricted to Sales department" in result["reason"]
 
 
 # ── 3. policy_lookup_tool Tests ───────────────────────────────────────────────
@@ -114,10 +127,14 @@ def test_policy_lookup_tool_success():
             "results": [],
         }
 
-        result = policy_lookup_tool.invoke({"query": "leave policy"}, config=config)
+        result_str = policy_lookup_tool.invoke({"query": "leave policy"}, config=config)
 
-        assert "This is the retrieved corporate annual leave policy answer." in result
-        assert "Grounding Status: True" in result
+        import json
+        result = json.loads(result_str)
+        assert result["status"] == "success"
+        assert result["answer"] == "This is the retrieved corporate annual leave policy answer."
+        assert result["grounding"] is True
+        assert "Grounding Status: True" in result["raw_output"]
         mock_pipeline.assert_called_once_with(
             query="leave policy",
             user=config["configurable"]["user"],

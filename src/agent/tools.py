@@ -1,3 +1,4 @@
+import json
 import logging
 from pydantic import BaseModel, Field
 from langchain_core.tools import tool
@@ -38,7 +39,11 @@ def policy_lookup_tool(query: str, config: RunnableConfig) -> str:
     configurable = config.get("configurable", {})
     user = configurable.get("user")
     if not user:
-        return "Error: User context is missing or unauthenticated. Cannot query policies."
+        return json.dumps({
+            "status": "error",
+            "error": "Authentication Error",
+            "reason": "User context is missing or unauthenticated. Cannot query policies."
+        })
 
     # Extract services from config or load lazy fallbacks
     engine = configurable.get("search_engine")
@@ -74,13 +79,21 @@ def policy_lookup_tool(query: str, config: RunnableConfig) -> str:
             grounding_checker=grounding_checker,
             retrieval_rail=retrieval_rail,
         )
-        return (
-            f"Answer: {res['answer']}\n\n"
-            f"[Grounding Status: {res['grounding'].get('grounded')}]"
-        )
+        grounding_val = res['grounding'].get('grounded')
+        return json.dumps({
+            "status": "success",
+            "answer": res["answer"],
+            "grounding": grounding_val,
+            "reason": res["grounding"].get("reason", ""),
+            "raw_output": f"Answer: {res['answer']}\n\n[Grounding Status: {grounding_val}]"
+        })
     except Exception as e:
         logger.error(f"Error in policy_lookup_tool: {e}")
-        return f"Error retrieving policy details: {str(e)}"
+        return json.dumps({
+            "status": "error",
+            "error": "Execution Error",
+            "reason": f"Error retrieving policy details: {str(e)}"
+        })
 
 
 @tool("create_leave_request_tool", args_schema=CreateLeaveRequestInput)
@@ -96,21 +109,32 @@ def create_leave_request_tool(
     user: UserContext = configurable.get("user")
     
     if not user:
-        return "Error: User context is missing. Cannot request leave."
+        return json.dumps({
+            "status": "error",
+            "error": "Authentication Error",
+            "reason": "User context is missing. Cannot request leave."
+        })
         
     # Department validation (RBAC)
     if user.department.upper() != "HR":
-        return f"Access Denied: User {user.user_id} (Department: {user.department}) is not authorized to create leave requests. This tool is restricted to HR department."
+        return json.dumps({
+            "status": "denied",
+            "error": "Access Denied",
+            "reason": f"User {user.user_id} (Department: {user.department}) is not authorized to create leave requests. This tool is restricted to HR department."
+        })
 
     # Perform action (Mock implementation)
-    return (
-        f"Success: Leave request created successfully in HR system.\n"
-        f"Details:\n"
-        f"- Employee: {employee_id}\n"
-        f"- Period: {start_date} to {end_date}\n"
-        f"- Reason: {reason}\n"
-        f"- Created By: {user.user_id} (HR Manager/Staff)"
-    )
+    return json.dumps({
+        "status": "success",
+        "message": "Leave request created successfully in HR system.",
+        "details": {
+            "employee_id": employee_id,
+            "start_date": start_date,
+            "end_date": end_date,
+            "reason": reason,
+            "created_by": user.user_id
+        }
+    })
 
 
 @tool("update_crm_opportunity_tool", args_schema=UpdateOpportunityInput)
@@ -126,17 +150,28 @@ def update_crm_opportunity_tool(
     user: UserContext = configurable.get("user")
     
     if not user:
-        return "Error: User context is missing. Cannot update CRM."
+        return json.dumps({
+            "status": "error",
+            "error": "Authentication Error",
+            "reason": "User context is missing. Cannot update CRM."
+        })
         
     # Department validation (RBAC)
     if user.department.upper() != "SALES":
-        return f"Access Denied: User {user.user_id} (Department: {user.department}) is not authorized to update CRM opportunities. This tool is restricted to Sales department."
+        return json.dumps({
+            "status": "denied",
+            "error": "Access Denied",
+            "reason": f"User {user.user_id} (Department: {user.department}) is not authorized to update CRM opportunities. This tool is restricted to Sales department."
+        })
 
     # Perform action (Mock implementation)
-    return (
-        f"Success: CRM Opportunity {opp_id} updated successfully.\n"
-        f"Details:\n"
-        f"- New Stage: {stage}\n"
-        f"- Next Step: {next_step}\n"
-        f"- Updated By: {user.user_id} (Sales Agent)"
-    )
+    return json.dumps({
+        "status": "success",
+        "message": f"CRM Opportunity {opp_id} updated successfully.",
+        "details": {
+            "opp_id": opp_id,
+            "stage": stage,
+            "next_step": next_step,
+            "updated_by": user.user_id
+        }
+    })

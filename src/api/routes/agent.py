@@ -37,6 +37,7 @@ def get_agent_graph(request: Request):
     summary="Agentic conversation streaming with tool calling and memory"
 )
 async def chat_agent(
+    request: Request,
     body: AgentChatRequest = Body(...),
     current_user: CurrentUser = None,
     agent_graph = Depends(get_agent_graph),
@@ -79,6 +80,11 @@ async def chat_agent(
         try:
             # Call LangGraph's astream_events using version 2 protocol
             async for event in agent_graph.astream_events(input_state, config=config, version="v2"):
+                # Check if client disconnected to abort streaming early and save costs
+                if await request.is_disconnected():
+                    logger.info("Client disconnected from SSE stream, aborting generator.")
+                    break
+
                 kind = event.get("event")
                 name = event.get("name")
 

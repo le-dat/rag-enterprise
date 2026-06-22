@@ -7,6 +7,7 @@ from src.config import settings
 logger = logging.getLogger("llm_judge")
 
 class LLMJudge:
+    def __init__(self):
         self.client = get_openai_client()
         self.model = self.client.model if self.client else settings.OPENAI_MODEL
 

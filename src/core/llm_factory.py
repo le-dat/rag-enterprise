@@ -1,6 +1,6 @@
 import logging
 from typing import Any, List, Optional
-from openai import OpenAI
+from openai import OpenAI, APIStatusError, APIConnectionError, APITimeoutError
 from langchain_openai import ChatOpenAI
 from langchain_core.language_models.chat_models import BaseChatModel
 
@@ -78,15 +78,25 @@ class FallbackCompletions:
 
         last_error = None
         for i, client in enumerate(self.clients):
+            provider_name = "Primary" if i == 0 else f"Backup {i}"
             try:
                 call_kwargs = kwargs.copy()
                 if i < len(self.models):
                     call_kwargs["model"] = self.models[i]
                 return client.chat.completions.create(*args, **call_kwargs)
-            except Exception as e:
-                provider_name = "Primary" if i == 0 else f"Backup {i}"
-                logger.warning(f"{provider_name} LLM client failed: {e}. Trying next fallback...")
+            except APIStatusError as e:
+                # Fail fast on client errors (400, 401, 403, 404, 422) but fallback on rate limits/server errors
+                if e.status_code not in (429, 500, 502, 503, 504):
+                    logger.error(f"Client error from {provider_name} LLM client (status {e.status_code}): {e}. Failing fast.")
+                    raise e
+                logger.warning(f"{provider_name} LLM client failed with status {e.status_code}: {e}. Trying next fallback...")
                 last_error = e
+            except (APIConnectionError, APITimeoutError) as e:
+                logger.warning(f"{provider_name} LLM client connection/timeout failed: {e}. Trying next fallback...")
+                last_error = e
+            except Exception as e:
+                logger.error(f"Unexpected error in {provider_name} execution: {e}. Failing fast.")
+                raise e
 
         if last_error:
             raise last_error

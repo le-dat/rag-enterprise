@@ -166,18 +166,39 @@ export default function Home() {
                 );
               } else if (data.event === "tool_end") {
                 // Tool completed
-                const toolOutput = data.output;
-                const isDenied = toolOutput.includes("Access Denied") || toolOutput.includes("denied");
-                
-                // Determine grounding status if it is policy_lookup
+                let toolOutput = data.output;
+                let isDenied = toolOutput.includes("Access Denied") || toolOutput.includes("denied");
                 let groundingVal: { grounded: boolean; reason?: string } | undefined = undefined;
-                if (data.tool === "policy_lookup_tool") {
-                  const matchGrounded = toolOutput.match(/\[Grounding Status: (True|False)\]/);
-                  if (matchGrounded) {
+
+                try {
+                  const parsed = JSON.parse(toolOutput);
+                  if (parsed.status === "denied") {
+                    isDenied = true;
+                  }
+                  if (parsed.grounding !== undefined) {
                     groundingVal = {
-                      grounded: matchGrounded[1] === "True",
-                      reason: "Cross-checked with parsed source document chunks."
+                      grounded: parsed.grounding,
+                      reason: parsed.reason || "Cross-checked with parsed source document chunks."
                     };
+                  }
+                  // Choose user-friendly formatted output for display
+                  if (parsed.reason && parsed.status === "denied") {
+                    toolOutput = parsed.reason;
+                  } else if (parsed.raw_output) {
+                    toolOutput = parsed.raw_output;
+                  } else if (parsed.message) {
+                    toolOutput = parsed.message;
+                  }
+                } catch (e) {
+                  // Legacy string matches
+                  if (data.tool === "policy_lookup_tool") {
+                    const matchGrounded = toolOutput.match(/\[Grounding Status: (True|False)\]/);
+                    if (matchGrounded) {
+                      groundingVal = {
+                        grounded: matchGrounded[1] === "True",
+                        reason: "Cross-checked with parsed source document chunks."
+                      };
+                    }
                   }
                 }
 
