@@ -1,3 +1,12 @@
+import os
+NUM_THREADS = os.getenv("EMBEDDING_THREADS", "1")
+
+os.environ["OMP_NUM_THREADS"] = NUM_THREADS
+os.environ["MKL_NUM_THREADS"] = NUM_THREADS
+os.environ["OPENBLAS_NUM_THREADS"] = NUM_THREADS
+os.environ["VECLIB_MAXIMUM_THREADS"] = NUM_THREADS
+os.environ["NUMEXPR_NUM_THREADS"] = NUM_THREADS
+
 import logging
 from contextlib import asynccontextmanager
 
@@ -15,8 +24,6 @@ from src.api.routes import search, query, agent, auth
 
 configure_logging()
 logger = logging.getLogger(__name__)
-
-
 
 
 @asynccontextmanager

@@ -2,6 +2,7 @@ import logging
 from typing import List, Dict, Any
 from llama_index.core.schema import TextNode
 from fastembed import TextEmbedding, SparseTextEmbedding
+from src.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -12,10 +13,10 @@ class DocumentEmbedder:
         sparse_model_name: str = "prithivida/Splade_PP_en_v1"
     ):
         logger.info(f"Initializing dense model: {dense_model_name}")
-        self.dense_model = TextEmbedding(model_name=dense_model_name)
+        self.dense_model = TextEmbedding(model_name=dense_model_name, threads=settings.EMBEDDING_THREADS)
         
         logger.info(f"Initializing sparse model: {sparse_model_name}")
-        self.sparse_model = SparseTextEmbedding(model_name=sparse_model_name)
+        self.sparse_model = SparseTextEmbedding(model_name=sparse_model_name, threads=settings.EMBEDDING_THREADS)
 
     def embed_nodes(self, nodes: List[TextNode]) -> List[Dict[str, Any]]:
         """

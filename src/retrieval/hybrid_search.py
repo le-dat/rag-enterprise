@@ -26,8 +26,8 @@ class HybridSearchEngine:
         self.client = QdrantClient(url=self.url, api_key=self.api_key)
         
         logger.info(f"Loading search embedding models: dense={dense_model_name}, sparse={sparse_model_name}")
-        self.dense_model = TextEmbedding(model_name=dense_model_name)
-        self.sparse_model = SparseTextEmbedding(model_name=sparse_model_name)
+        self.dense_model = TextEmbedding(model_name=dense_model_name, threads=settings.EMBEDDING_THREADS)
+        self.sparse_model = SparseTextEmbedding(model_name=sparse_model_name, threads=settings.EMBEDDING_THREADS)
 
     def search(self, query_text: str, user: UserContext, limit: int = 10) -> List[Dict[str, Any]]:
         """

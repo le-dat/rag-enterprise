@@ -41,5 +41,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day
 
+    # ── Threading/Resource limits ─────────────────────────────
+    EMBEDDING_THREADS: int = 1
+
 # Singleton settings instance
 settings = Settings()
