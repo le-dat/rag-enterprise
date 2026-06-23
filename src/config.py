@@ -1,3 +1,4 @@
+from functools import lru_cache
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -44,5 +45,10 @@ class Settings(BaseSettings):
     # ── Threading/Resource limits ─────────────────────────────
     EMBEDDING_THREADS: int = 1
 
-# Singleton settings instance
-settings = Settings()
+
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()  # type: ignore
+
+
+settings = get_settings()

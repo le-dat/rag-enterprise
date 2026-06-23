@@ -13,9 +13,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv package manager
 RUN pip install --no-cache-dir uv
 
-# Set target virtual environment path for uv
-ENV VIRTUAL_ENV=/.venv
-
 # Copy configuration and sync dependencies
 COPY pyproject.toml uv.lock ./
 RUN uv sync --no-dev --no-install-project
@@ -29,7 +26,7 @@ FROM python:3.12-slim AS runtime
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     HF_HUB_DISABLE_SYMLINKS_WARNING=1 \
-    PATH="/.venv/bin:$PATH" \
+    PATH="/app/.venv/bin:$PATH" \
     PYTHONPATH="/app"
 
 WORKDIR /app
@@ -40,7 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy virtual environment from builder
-COPY --from=builder /.venv /.venv
+COPY --from=builder /app/.venv /app/.venv
 
 # Create non-root application group and user
 RUN groupadd -g 10001 appgroup && \
