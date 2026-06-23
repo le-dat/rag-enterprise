@@ -1,60 +1,60 @@
-name: Build and Deploy to Render
+# name: Build and Deploy to Render
 
-on:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - "**/README.md"
-      - ".gitignore"
-      - ".env.example"
-      - "/app"
+# on:
+#   push:
+#     branches:
+#       - master
+#     paths-ignore:
+#       - "**/README.md"
+#       - ".gitignore"
+#       - ".env.example"
+#       - "/app"
 
-permissions:
-  contents: read
-  packages: write
+# permissions:
+#   contents: read
+#   packages: write
 
-jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+# jobs:
+#   build-and-push:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Log in to GitHub Container Registry
+#         uses: docker/login-action@v3
+#         with:
+#           registry: ghcr.io
+#           username: ${{ github.actor }}
+#           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Downcase repository owner and name
-        id: prep
-        run: |
-          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          REPO_NAME=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
-          echo "owner=${OWNER}" >> $GITHUB_OUTPUT
-          echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
+#       - name: Downcase repository owner and name
+#         id: prep
+#         run: |
+#           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+#           REPO_NAME=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
+#           echo "owner=${OWNER}" >> $GITHUB_OUTPUT
+#           echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ steps.prep.outputs.owner }}/${{ steps.prep.outputs.repo_name }}:latest
-            ghcr.io/${{ steps.prep.outputs.owner }}/${{ steps.prep.outputs.repo_name }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+#       - name: Build and push Docker image
+#         uses: docker/build-push-action@v5
+#         with:
+#           context: .
+#           file: ./Dockerfile
+#           push: true
+#           tags: |
+#             ghcr.io/${{ steps.prep.outputs.owner }}/${{ steps.prep.outputs.repo_name }}:latest
+#             ghcr.io/${{ steps.prep.outputs.owner }}/${{ steps.prep.outputs.repo_name }}:${{ github.sha }}
+#           cache-from: type=gha
+#           cache-to: type=gha,mode=max
 
-      - name: Trigger Render Deploy Hook
-        if: env.RENDER_DEPLOY_HOOK != ''
-        env:
-          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-        run: |
-          echo "Triggering Render redeployment..."
-          curl -s -S -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+#       - name: Trigger Render Deploy Hook
+#         if: env.RENDER_DEPLOY_HOOK != ''
+#         env:
+#           RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+#         run: |
+#           echo "Triggering Render redeployment..."
+#           curl -s -S -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"

@@ -10,9 +10,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+# Install uv package manager
+RUN pip install --no-cache-dir uv
 
+# Set up virtual environment
+RUN uv venv /.venv
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN uv pip install --no-cache-dir --python /.venv/bin/python -r requirements.txt
 
 # ==========================================
 # Stage 2: Runtime stage (minimal and secure)
@@ -23,6 +29,7 @@ FROM python:3.12-slim AS runtime
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     HF_HUB_DISABLE_SYMLINKS_WARNING=1 \
+    PATH="/.venv/bin:$PATH" \
     PYTHONPATH="/app"
 
 WORKDIR /app
@@ -32,8 +39,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy installed python dependencies from builder
-COPY --from=builder /install /usr/local
+# Copy virtual environment from builder
+COPY --from=builder /.venv /.venv
 
 # Create non-root application group and user
 RUN groupadd -g 10001 appgroup && \
