@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 export async function POST(request: Request) {
   try {
     const { role, department, user_id } = await request.json();
-    const fastapiUrl = process.env.NEXT_PUBLIC_FASTAPI_URL || "http://localhost:8000";
+    const fastapiUrl = process.env.NEXT_PUBLIC_FASTAPI_URL || "http://localhost:8000/api/v1";
 
     const response = await fetch(`${fastapiUrl}/auth/token`, {
       method: "POST",

@@ -19,7 +19,7 @@ from src.generation.generator import OpenAIGenerator
 from src.generation.grounding import GroundingChecker
 from src.guardrails.retrieval_rail import RetrievalRail
 from src.guardrails.input_rail import InputRail
-from src.api.routes import search, query, agent, auth
+from src.api.v1 import search, query, agent, auth
 
 
 configure_logging()
@@ -57,10 +57,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.include_router(search.router, tags=["Retrieval"])
-app.include_router(query.router, tags=["RAG Pipeline"])
-app.include_router(agent.router, prefix="/agent", tags=["Agentic Pipeline"])
-app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+app.include_router(search.router, prefix="/api/v1", tags=["Retrieval"])
+app.include_router(query.router, prefix="/api/v1", tags=["RAG Pipeline"])
+app.include_router(agent.router, prefix="/api/v1/agent", tags=["Agentic Pipeline"])
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 
 
 @app.get("/health", tags=["System"])

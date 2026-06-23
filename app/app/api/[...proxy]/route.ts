@@ -8,12 +8,10 @@ async function handleProxy(
   const token = request.cookies.get("session_token")?.value;
   
   // Construct destination URL
-  const fastapiUrl = process.env.NEXT_PUBLIC_FASTAPI_URL || "http://localhost:8000";
+  const fastapiUrl = process.env.NEXT_PUBLIC_FASTAPI_URL || "http://localhost:8000/api/v1";
   const searchParams = request.nextUrl.searchParams.toString();
   const destPath = proxy.join("/");
   const destUrl = `${fastapiUrl}/${destPath}${searchParams ? `?${searchParams}` : ""}`;
-
-  console.log(`[Proxy] Routing ${request.method} /api/${destPath} -> ${destUrl}`);
 
   const headers: Record<string, string> = {};
   

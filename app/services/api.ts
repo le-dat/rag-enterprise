@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_FASTAPI_URL || "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_FASTAPI_URL || "http://localhost:8000/api/v1";
 
 export class ApiError extends Error {
   constructor(
