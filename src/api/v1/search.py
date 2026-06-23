@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.get("/search", summary="Hybrid search with RBAC filtering")
+@router.get("", summary="Hybrid search with RBAC filtering")
 def search(
     q: str = Query(..., description="Query string to search"),
     limit: int = Query(5, ge=1, le=50, description="Max results to return"),

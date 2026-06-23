@@ -57,8 +57,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.include_router(search.router, prefix="/api/v1", tags=["Retrieval"])
-app.include_router(query.router, prefix="/api/v1", tags=["RAG Pipeline"])
+app.include_router(search.router, prefix="/api/v1/search", tags=["Retrieval"])
+app.include_router(query.router, prefix="/api/v1/query", tags=["RAG Pipeline"])
 app.include_router(agent.router, prefix="/api/v1/agent", tags=["Agentic Pipeline"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 

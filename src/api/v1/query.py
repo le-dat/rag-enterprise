@@ -24,7 +24,7 @@ class QueryRequest(BaseModel):
     q: str = Field(..., description="Natural-language question to answer")
 
 
-@router.post("/query", summary="Full RAG pipeline (search → rerank → generate)")
+@router.post("", summary="Full RAG pipeline (search → rerank → generate)")
 def query_pipeline(
     body: QueryRequest = Body(...),
     current_user: CurrentUser = None,
