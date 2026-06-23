@@ -1,4 +1,5 @@
 import logging
+from enum import Enum
 from typing import Any, List, Optional
 from openai import OpenAI, APIStatusError, APIConnectionError, APITimeoutError
 from langchain_openai import ChatOpenAI
@@ -8,8 +9,6 @@ from src.config import settings
 
 logger = logging.getLogger(__name__)
 
-
-from enum import Enum
 
 class LLMProviderName(str, Enum):
     OPENAI = "openai"
@@ -117,6 +116,7 @@ class FallbackOpenAIClient:
     """
     A drop-in replacement wrapper for the OpenAI client that intercepts completions
     calls and redirects them sequentially through a list of fallback clients in case of failure.
+    Delegates other attribute accesses to the primary client transparently.
     """
     def __init__(self, clients: List[OpenAI], models: List[str]):
         self.clients = clients
@@ -130,18 +130,31 @@ class FallbackOpenAIClient:
     def model(self) -> str:
         return self.models[0] if self.models else ""
 
+    def __getattr__(self, name: str) -> Any:
+        """
+        Delegate other client attributes (e.g. client.embeddings) transparently to the primary client.
+        """
+        if not self.clients:
+            raise AttributeError(f"'{self.__class__.__name__}' has no clients configured.")
+        return getattr(self.clients[0], name)
 
-# ── 3. Centralized Factory Functions ──────────────────────────────────────────
 
-def create_chat_model(provider: LLMProvider) -> ChatOpenAI:
+# ── 3. Centralized Factory Functions with Singleton Caching ────────────────────
+
+# Module-level variables for singleton caching
+_cached_chat_model: Optional[BaseChatModel] = None
+_cached_openai_client: Optional[FallbackOpenAIClient] = None
+
+
+def create_chat_model(provider: LLMProvider, temperature: float = 0.0, streaming: bool = True) -> ChatOpenAI:
     """
     Creates a ChatOpenAI model instance for the given provider configuration.
     """
     kwargs = {
         "model": provider.model,
         "api_key": provider.api_key,
-        "temperature": 0.0,
-        "streaming": True
+        "temperature": temperature,
+        "streaming": streaming
     }
     if provider.base_url:
         kwargs["base_url"] = provider.base_url
@@ -149,10 +162,15 @@ def create_chat_model(provider: LLMProvider) -> ChatOpenAI:
     return ChatOpenAI(**kwargs)
 
 
-def get_chat_model() -> BaseChatModel:
+def get_chat_model(clear_cache: bool = False) -> BaseChatModel:
     """
     Returns a LangChain chat model with automatic fallback handling across all configured providers.
+    Caches the initialized model globally to avoid instantiation overhead.
     """
+    global _cached_chat_model
+    if _cached_chat_model is not None and not clear_cache:
+        return _cached_chat_model
+
     providers = get_configured_providers()
     if not providers:
         raise ValueError("No LLM providers are configured. Please verify your API keys.")
@@ -166,16 +184,23 @@ def get_chat_model() -> BaseChatModel:
             f"LLM initialized with primary ({providers[0].name}: {providers[0].model}) "
             f"and fallbacks ({', '.join(f'{p.name}: {p.model}' for p in providers[1:])})"
         )
-        return primary_model.with_fallbacks(backup_models)
+        _cached_chat_model = primary_model.with_fallbacks(backup_models)
     else:
         logger.info(f"LLM initialized with primary ({providers[0].name}: {providers[0].model}) only")
-        return models[0]
+        _cached_chat_model = models[0]
+
+    return _cached_chat_model
 
 
-def get_openai_client() -> Optional[FallbackOpenAIClient]:
+def get_openai_client(clear_cache: bool = False) -> Optional[FallbackOpenAIClient]:
     """
     Returns a transparent client wrapper that falls back sequentially across configured clients.
+    Caches the client wrapper globally.
     """
+    global _cached_openai_client
+    if _cached_openai_client is not None and not clear_cache:
+        return _cached_openai_client
+
     providers = get_configured_providers()
     if not providers:
         return None
@@ -189,4 +214,5 @@ def get_openai_client() -> Optional[FallbackOpenAIClient]:
         clients.append(OpenAI(**kwargs))
         models.append(p.model)
 
-    return FallbackOpenAIClient(clients, models)
+    _cached_openai_client = FallbackOpenAIClient(clients, models)
+    return _cached_openai_client
