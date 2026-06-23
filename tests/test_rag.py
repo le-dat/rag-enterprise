@@ -25,7 +25,7 @@ def test_reranker_success(mocker):
     mock_instance.rerank.return_value.results = [mock_result_1, mock_result_2]
 
     # Initialize Reranker with fake key to ensure client is created
-    with patch("src.config.settings.COHERE_API_KEY", "fake_key"):
+    with patch("src.core.config.settings.COHERE_API_KEY", "fake_key"):
         reranker = CohereReranker()
         
     docs = [
@@ -45,7 +45,7 @@ def test_reranker_success(mocker):
 
 def test_reranker_missing_key_fallback():
     # When api key is missing, should return slice of documents directly
-    with patch("src.config.settings.COHERE_API_KEY", ""):
+    with patch("src.core.config.settings.COHERE_API_KEY", ""):
         reranker = CohereReranker()
         
     docs = [
@@ -70,7 +70,7 @@ def test_generator_success(mocker):
     mock_choice.message.content = "This is a mocked answer [doc_A]."
     mock_instance.chat.completions.create.return_value.choices = [mock_choice]
     
-    with patch("src.config.settings.OPENAI_API_KEY", "fake_key"):
+    with patch("src.core.config.settings.OPENAI_API_KEY", "fake_key"):
         generator = OpenAIGenerator()
         
     docs = [
@@ -82,7 +82,7 @@ def test_generator_success(mocker):
     assert "[doc_A]" in answer
 
 def test_generator_empty_context():
-    with patch("src.config.settings.OPENAI_API_KEY", "fake_key"):
+    with patch("src.core.config.settings.OPENAI_API_KEY", "fake_key"):
         generator = OpenAIGenerator()
         
     answer = generator.generate(query="what is A?", documents=[])
@@ -101,7 +101,7 @@ def test_grounding_checker_success(mocker):
     mock_choice.message.content = '{"grounded": true, "reason": "All facts match context."}'
     mock_instance.chat.completions.create.return_value.choices = [mock_choice]
     
-    with patch("src.config.settings.OPENAI_API_KEY", "fake_key"):
+    with patch("src.core.config.settings.OPENAI_API_KEY", "fake_key"):
         checker = GroundingChecker()
         
     docs = [
@@ -114,7 +114,7 @@ def test_grounding_checker_success(mocker):
 
 def test_grounding_checker_insufficient_context_refusal():
     # If the answer is an explicit refusal, it is grounded by default
-    with patch("src.config.settings.OPENAI_API_KEY", "fake_key"):
+    with patch("src.core.config.settings.OPENAI_API_KEY", "fake_key"):
         checker = GroundingChecker()
         
     res = checker.check_grounding(documents=[], answer="I cannot answer this query based on the retrieved context.")
@@ -133,7 +133,7 @@ def test_retrieval_rail_safe(mocker):
     mock_choice.message.content = "0.001"
     mock_instance.chat.completions.create.return_value.choices = [mock_choice]
     
-    with patch("src.config.settings.GROQ_API_KEY", "fake_key"):
+    with patch("src.core.config.settings.GROQ_API_KEY", "fake_key"):
         rail = RetrievalRail()
         
     chunks = [
@@ -150,7 +150,7 @@ def test_retrieval_rail_skipped_heuristics(mocker):
     mock_groq_client = mocker.patch("src.guardrails.retrieval_rail.Groq")
     mock_instance = mock_groq_client.return_value
     
-    with patch("src.config.settings.GROQ_API_KEY", "fake_key"):
+    with patch("src.core.config.settings.GROQ_API_KEY", "fake_key"):
         rail = RetrievalRail()
         
     chunks = [
@@ -171,7 +171,7 @@ def test_retrieval_rail_unsafe(mocker):
     mock_choice.message.content = "unsafe\nS1"
     mock_instance.chat.completions.create.return_value.choices = [mock_choice]
     
-    with patch("src.config.settings.GROQ_API_KEY", "fake_key"):
+    with patch("src.core.config.settings.GROQ_API_KEY", "fake_key"):
         rail = RetrievalRail()
         
     chunks = [
@@ -189,7 +189,7 @@ def test_retrieval_rail_unsafe_score(mocker):
     mock_choice.message.content = "0.998"
     mock_instance.chat.completions.create.return_value.choices = [mock_choice]
     
-    with patch("src.config.settings.GROQ_API_KEY", "fake_key"):
+    with patch("src.core.config.settings.GROQ_API_KEY", "fake_key"):
         rail = RetrievalRail()
         
     chunks = [
@@ -200,7 +200,7 @@ def test_retrieval_rail_unsafe_score(mocker):
     assert len(validated) == 0  # Blocked!
 
 def test_retrieval_rail_missing_key():
-    with patch("src.config.settings.GROQ_API_KEY", ""):
+    with patch("src.core.config.settings.GROQ_API_KEY", ""):
         rail = RetrievalRail()
         
     chunks = [

@@ -1,7 +1,7 @@
 import logging
 from typing import List, Dict, Any
 from src.core.llm_factory import get_openai_client
-from src.config import settings
+from src.core.config import settings
 
 logger = logging.getLogger(__name__)
 

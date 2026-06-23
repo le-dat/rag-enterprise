@@ -2,7 +2,7 @@ import logging
 from typing import List, Dict, Any
 from llama_index.core.schema import TextNode
 from fastembed import TextEmbedding, SparseTextEmbedding
-from src.config import settings
+from src.core.config import settings
 
 logger = logging.getLogger(__name__)
 

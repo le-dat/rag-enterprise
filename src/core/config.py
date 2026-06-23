@@ -5,10 +5,12 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     # Enable automatic loading from .env file at project root
     model_config = SettingsConfigDict(
-        env_file=str(Path(__file__).resolve().parents[1] / ".env"),
+        env_file=str(Path(__file__).resolve().parents[2] / ".env"),
         env_file_encoding="utf-8",
         extra="ignore"
     )
+    PROJECT_NAME: str = "Enterprise RAG"
+    API_V1_STR: str = "/api/v1"
 
     # ── LLM APIs ──────────────────────────────────────────────
     OPENAI_API_KEY: str = ""

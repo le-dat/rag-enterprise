@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import jwt, JWTError
 from pydantic import BaseModel, Field
-from src.config import settings
+from src.core.config import settings
 
 class UserContext(BaseModel):
     user_id: str = Field(..., description="Unique identifier of the employee")

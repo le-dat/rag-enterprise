@@ -2,7 +2,7 @@ import logging
 import re
 from typing import List, Dict, Any
 from groq import Groq
-from src.config import settings
+from src.core.config import settings
 
 logger = logging.getLogger(__name__)
 

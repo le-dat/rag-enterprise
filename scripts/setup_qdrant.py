@@ -17,7 +17,7 @@ from pathlib import Path
 from fastembed import SparseTextEmbedding, TextEmbedding
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as rest
-from src.config import settings
+from src.core.config import settings
 
 COLLECTION_NAME = settings.QDRANT_COLLECTION
 DENSE_DIM = 384  # BAAI/bge-small-en-v1.5

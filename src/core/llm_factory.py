@@ -5,7 +5,7 @@ from openai import OpenAI, APIStatusError, APIConnectionError, APITimeoutError
 from langchain_openai import ChatOpenAI
 from langchain_core.language_models.chat_models import BaseChatModel
 
-from src.config import settings
+from src.core.config import settings
 
 logger = logging.getLogger(__name__)
 

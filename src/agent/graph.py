@@ -5,7 +5,6 @@ from langgraph.checkpoint.memory import MemorySaver
 from src.core.llm_factory import get_chat_model
 from langchain_core.runnables import RunnableConfig
 
-from src.config import settings
 from src.agent.tools import policy_lookup_tool, create_leave_request_tool, update_crm_opportunity_tool
 
 logger = logging.getLogger(__name__)

@@ -1,7 +1,7 @@
 import argparse
 import sys
 from qdrant_client import QdrantClient
-from src.config import settings
+from src.core.config import settings
 
 def print_collection_points(collection_name: str, limit: int) -> None:
     url = settings.QDRANT_URL
@@ -11,7 +11,7 @@ def print_collection_points(collection_name: str, limit: int) -> None:
         print("❌ QDRANT_URL is not configured in settings.")
         sys.exit(1)
         
-    client = QdrantClient(url=url, api_key=api_key)
+    client = QdrantClient(url=url, api_key=api_key, check_compatibility=False)
     
     try:
         # Scroll points to see payload information

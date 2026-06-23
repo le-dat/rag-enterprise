@@ -4,7 +4,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.http import models as rest
 from fastembed import TextEmbedding, SparseTextEmbedding
 
-from src.config import settings
+from src.core.config import settings
 from src.auth.jwt_handler import UserContext
 from src.retrieval.rbac_filter import build_qdrant_rbac_filter
 
@@ -23,7 +23,7 @@ class HybridSearchEngine:
         if not self.url:
             raise ValueError("QDRANT_URL is not configured in settings.")
             
-        self.client = QdrantClient(url=self.url, api_key=self.api_key)
+        self.client = QdrantClient(url=self.url, api_key=self.api_key, check_compatibility=False)
         
         logger.info(f"Loading search embedding models: dense={dense_model_name}, sparse={sparse_model_name}")
         self.dense_model = TextEmbedding(model_name=dense_model_name, threads=settings.EMBEDDING_THREADS)

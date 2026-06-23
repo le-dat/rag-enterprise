@@ -11,3 +11,10 @@ def configure_logging(level: int = logging.INFO) -> None:
         handlers=[logging.StreamHandler(sys.stdout)],
         force=True,  # override any prior basicConfig calls
     )
+
+    # Clear Uvicorn's handlers and propagate them to the root logger to unify log formatting and avoid double logs
+    for logger_name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
+        logger = logging.getLogger(logger_name)
+        logger.handlers = []
+        logger.propagate = True
+

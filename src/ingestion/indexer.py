@@ -3,7 +3,7 @@ import uuid
 from typing import List, Dict, Any
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as rest
-from src.config import settings
+from src.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class QdrantIndexer:
         if not self.url:
             raise ValueError("QDRANT_URL is not configured in settings.")
             
-        self.client = QdrantClient(url=self.url, api_key=self.api_key)
+        self.client = QdrantClient(url=self.url, api_key=self.api_key, check_compatibility=False)
 
     def index_embedded_data(self, embedded_data: List[Dict[str, Any]]) -> int:
         """

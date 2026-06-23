@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from fastembed import TextEmbedding
 
-from src.config import settings
+from src.core.config import settings
 from src.auth.jwt_handler import UserContext, generate_token
 from src.retrieval.hybrid_search import HybridSearchEngine
 from src.retrieval.reranker import CohereReranker
