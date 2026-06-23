@@ -13,12 +13,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv package manager
 RUN pip install --no-cache-dir uv
 
-# Set up virtual environment
-RUN uv venv /.venv
+# Set target virtual environment path for uv
+ENV VIRTUAL_ENV=/.venv
 
-# Copy requirements and install dependencies
-COPY requirements.txt .
-RUN uv pip install --no-cache-dir --python /.venv/bin/python -r requirements.txt
+# Copy configuration and sync dependencies
+COPY pyproject.toml uv.lock ./
+RUN uv sync --no-dev --no-install-project
 
 # ==========================================
 # Stage 2: Runtime stage (minimal and secure)
