@@ -1,6 +1,6 @@
 services:
   backend:
-
+    image: ghcr.io/le-dat/rag-enterprise:latest
     build:
       context: ..
       dockerfile: docker/Dockerfile
