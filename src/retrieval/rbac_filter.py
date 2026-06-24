@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 from qdrant_client.http import models as rest
 from src.auth.jwt_handler import UserContext
 
@@ -13,7 +14,7 @@ def build_qdrant_rbac_filter(user: UserContext) -> rest.Filter:
     - If user is a 'staff', they can only view 'staff' level documents.
     - If user is a 'manager', they can view both 'staff' and 'manager' level documents.
     """
-    conditions = []
+    conditions: list[Any] = []
     
     # 1. Department Filter
     conditions.append(

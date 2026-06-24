@@ -27,13 +27,13 @@ class QueryRequest(BaseModel):
 @router.post("", summary="Full RAG pipeline (search → rerank → generate)")
 def query_pipeline(
     body: QueryRequest = Body(...),
-    current_user: CurrentUser = None,
-    engine: SearchEngineDep = None,
-    reranker: RerankerDep = None,
-    generator: GeneratorDep = None,
-    grounding: GroundingDep = None,
-    retrieval_rail: RetrievalRailDep = None,
-    i_rail: InputRailDep = None,
+    current_user: CurrentUser = None,  # type: ignore[assignment]
+    engine: SearchEngineDep = None,  # type: ignore[assignment]
+    reranker: RerankerDep = None,  # type: ignore[assignment]
+    generator: GeneratorDep = None,  # type: ignore[assignment]
+    grounding: GroundingDep = None,  # type: ignore[assignment]
+    retrieval_rail: RetrievalRailDep = None,  # type: ignore[assignment]
+    i_rail: InputRailDep = None,  # type: ignore[assignment]
 ):
     """
     Secure full RAG pipeline endpoint:

@@ -142,7 +142,7 @@ class FallbackOpenAIClient:
 # ── 3. Centralized Factory Functions with Singleton Caching ────────────────────
 
 # Module-level variables for singleton caching
-_cached_chat_model: Optional[BaseChatModel] = None
+_cached_chat_model: Optional[Any] = None
 _cached_openai_client: Optional[FallbackOpenAIClient] = None
 
 
@@ -150,7 +150,7 @@ def create_chat_model(provider: LLMProvider, temperature: float = 0.0, streaming
     """
     Creates a ChatOpenAI model instance for the given provider configuration.
     """
-    kwargs = {
+    kwargs: dict[str, Any] = {
         "model": provider.model,
         "api_key": provider.api_key,
         "temperature": temperature,
@@ -189,7 +189,7 @@ def get_chat_model(clear_cache: bool = False) -> BaseChatModel:
         logger.info(f"LLM initialized with primary ({providers[0].name}: {providers[0].model}) only")
         _cached_chat_model = models[0]
 
-    return _cached_chat_model
+    return _cached_chat_model  # type: ignore[return-value]
 
 
 def get_openai_client(clear_cache: bool = False) -> Optional[FallbackOpenAIClient]:
@@ -208,7 +208,7 @@ def get_openai_client(clear_cache: bool = False) -> Optional[FallbackOpenAIClien
     clients = []
     models = []
     for p in providers:
-        kwargs = {"api_key": p.api_key}
+        kwargs: dict[str, Any] = {"api_key": p.api_key}
         if p.base_url:
             kwargs["base_url"] = p.base_url
         clients.append(OpenAI(**kwargs))

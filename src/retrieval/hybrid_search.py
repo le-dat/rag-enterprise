@@ -76,13 +76,14 @@ class HybridSearchEngine:
         # 5. Format results cleanly
         results = []
         for point in response.points:
+            payload = point.payload or {}
             results.append({
-                "chunk_id": point.payload.get("chunk_id"),
-                "text": point.payload.get("text"),
-                "source": point.payload.get("source"),
-                "department": point.payload.get("department"),
-                "role": point.payload.get("role"),
-                "page": point.payload.get("page"),
+                "chunk_id": payload.get("chunk_id"),
+                "text": payload.get("text"),
+                "source": payload.get("source"),
+                "department": payload.get("department"),
+                "role": payload.get("role"),
+                "page": payload.get("page"),
                 "score": point.score  # Fused RRF score
             })
             

@@ -31,7 +31,8 @@ def print_collection_points(collection_name: str, limit: int) -> None:
             print(f"\nPoint #{idx + 1}")
             print(f"  ID: {point.id}")
             print("  Payload:")
-            for key, val in point.payload.items():
+            payload = point.payload or {}
+            for key, val in payload.items():
                 # Clip text value if it is too long for easy reading
                 if key == "text" and len(str(val)) > 150:
                     val = str(val)[:150] + "..."

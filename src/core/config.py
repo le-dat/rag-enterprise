@@ -44,8 +44,16 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day
 
-    # ── Threading/Resource limits ─────────────────────────────
+    # ── Threading/Resource limits ─────────────────────────────────────────────
     EMBEDDING_THREADS: int = 1
+
+    # ── Concurrency & Rate Limiting ───────────────────────────────────────────
+    # Max concurrent RAG pipeline executions (across all users on one worker).
+    PIPELINE_MAX_CONCURRENT: int = 50
+    # Max chat requests per user per minute (slowapi rate limiter).
+    RATE_LIMIT_PER_MINUTE: int = 10
+    # Hard timeout for a single tool execution in seconds.
+    TOOL_TIMEOUT_SECONDS: int = 30
 
 
 @lru_cache()

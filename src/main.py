@@ -1,11 +1,14 @@
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from src.core.logging import configure_logging
+from src.core.config import get_settings
+from src.core.rate_limit import limiter
 from src.lifespan import lifespan
 from src.api.v1 import search, query, agent, auth
-from src.core.config import get_settings
 
 
 configure_logging()
@@ -26,7 +29,9 @@ app = FastAPI(
     redoc_url=f"{settings.API_V1_STR}/redoc",
 )
 
-# Configure CORS
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore[arg-type]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

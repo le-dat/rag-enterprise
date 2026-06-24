@@ -18,9 +18,9 @@ router = APIRouter()
 def search(
     q: str = Query(..., description="Query string to search"),
     limit: int = Query(5, ge=1, le=50, description="Max results to return"),
-    current_user: CurrentUser = None,
-    engine: SearchEngineDep = None,
-    i_rail: InputRailDep = None,
+    current_user: CurrentUser = None,  # type: ignore[assignment]
+    engine: SearchEngineDep = None,  # type: ignore[assignment]
+    i_rail: InputRailDep = None,  # type: ignore[assignment]
 ):
     """
     Secure search endpoint protected by JWT Bearer token.

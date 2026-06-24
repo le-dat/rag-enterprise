@@ -30,7 +30,7 @@ def test_create_leave_request_tool_hr_success():
     )
     import json
     result = json.loads(result_str)
-    assert result["status"] == "success"
+    assert result["status"] == "ok"
     assert "Leave request created successfully" in result["message"]
     assert result["details"]["employee_id"] == "emp_101"
     assert result["details"]["start_date"] == "2026-07-01"
@@ -56,8 +56,8 @@ def test_create_leave_request_tool_sales_denied():
     import json
     result = json.loads(result_str)
     assert result["status"] == "denied"
-    assert result["error"] == "Access Denied"
-    assert "restricted to HR department" in result["reason"]
+    assert result["code"] == "ACCESS_DENIED"
+    assert "Department: Sales" in result["detail"]
 
 
 # ── 2. update_crm_opportunity_tool Tests ──────────────────────────────────────
@@ -78,7 +78,7 @@ def test_update_crm_opportunity_tool_sales_success():
     )
     import json
     result = json.loads(result_str)
-    assert result["status"] == "success"
+    assert result["status"] == "ok"
     assert "updated successfully" in result["message"]
     assert result["details"]["opp_id"] == "opp_999"
     assert result["details"]["stage"] == "Proposal"
@@ -102,13 +102,14 @@ def test_update_crm_opportunity_tool_hr_denied():
     import json
     result = json.loads(result_str)
     assert result["status"] == "denied"
-    assert result["error"] == "Access Denied"
-    assert "restricted to Sales department" in result["reason"]
+    assert result["code"] == "ACCESS_DENIED"
+    assert "Department: HR" in result["detail"]
 
 
 # ── 3. policy_lookup_tool Tests ───────────────────────────────────────────────
 
-def test_policy_lookup_tool_success():
+@pytest.mark.anyio
+async def test_policy_lookup_tool_success():
     config = {
         "configurable": {
             "user": UserContext(user_id="user_any", role="staff", department="IT"),
@@ -120,21 +121,20 @@ def test_policy_lookup_tool_success():
         }
     }
 
-    with patch("src.agent.tools.run_rag_pipeline") as mock_pipeline:
+    with patch("src.agent.tools.policy.run_rag_pipeline") as mock_pipeline:
         mock_pipeline.return_value = {
             "answer": "This is the retrieved corporate annual leave policy answer.",
             "grounding": {"grounded": True, "reason": "Fully supported."},
             "results": [],
         }
 
-        result_str = policy_lookup_tool.invoke({"query": "leave policy"}, config=config)
+        result_str = await policy_lookup_tool.ainvoke({"query": "leave policy"}, config=config)
 
         import json
         result = json.loads(result_str)
-        assert result["status"] == "success"
+        assert result["status"] == "ok"
         assert result["answer"] == "This is the retrieved corporate annual leave policy answer."
         assert result["grounding"] is True
-        assert "Grounding Status: True" in result["raw_output"]
         mock_pipeline.assert_called_once_with(
             query="leave policy",
             user=config["configurable"]["user"],
