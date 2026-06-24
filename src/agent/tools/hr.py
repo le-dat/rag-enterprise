@@ -9,6 +9,7 @@ from langchain_core.runnables import RunnableConfig
 from pydantic import BaseModel, Field
 
 from src.agent.middleware import rbac_guard
+from src.core.enums import Department
 from src.agent.schemas import tool_ok, tool_fail
 
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ class CreateLeaveRequestInput(BaseModel):
 
 
 @tool("create_leave_request_tool", args_schema=CreateLeaveRequestInput)
-@rbac_guard(allowed_departments=["HR"])
+@rbac_guard(allowed_departments=[Department.HR.value])
 def create_leave_request_tool(
     employee_id: str,
     start_date: str,

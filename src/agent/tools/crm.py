@@ -9,6 +9,7 @@ from langchain_core.runnables import RunnableConfig
 from pydantic import BaseModel, Field
 
 from src.agent.middleware import rbac_guard
+from src.core.enums import Department
 from src.agent.schemas import tool_ok, tool_fail
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class UpdateOpportunityInput(BaseModel):
 
 
 @tool("update_crm_opportunity_tool", args_schema=UpdateOpportunityInput)
-@rbac_guard(allowed_departments=["SALES"])
+@rbac_guard(allowed_departments=[Department.SALES.value])
 def update_crm_opportunity_tool(
     opp_id: str,
     stage: str,
