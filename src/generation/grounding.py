@@ -34,8 +34,6 @@ class GroundingChecker:
             "insufficient information",
             "lack of permissions",
             "cannot answer",
-            "không thể trả lời",
-            "không tìm thấy ngữ cảnh"
         ]
         if any(marker in answer.lower() for marker in insufficient_markers):
             return {
