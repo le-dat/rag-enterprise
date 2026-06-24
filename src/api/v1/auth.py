@@ -1,15 +1,16 @@
 import uuid
 import logging
+from typing import Literal
 from fastapi import APIRouter
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from src.auth.jwt_handler import generate_token
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 class TokenRequest(BaseModel):
-    role: str
-    department: str
+    role: Literal["manager", "staff"] = Field(description="User RBAC Role level")
+    department: Literal["HR", "Sales"] = Field(description="User RBAC Department")
     user_id: str = ""
 
 @router.post("/token", summary="Generate a signed JWT token with RBAC claims")

@@ -5,10 +5,9 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'docs/**'
       - 'README.md'
       - '.gitignore'
-      - '.claude/**'
+      - 'app/**' 
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
